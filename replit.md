@@ -4,7 +4,7 @@ An interactive Streamlit app that sends user questions to Google Gemini and disp
 
 ## Run & Operate
 
-- `streamlit run app.py --server.port 8000 --server.headless true --browser.gatherUsageStats false` — run the app
+- `streamlit run app.py --server.port 8080 --server.headless true --browser.gatherUsageStats false` — run the app
 - `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
