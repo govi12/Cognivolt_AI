@@ -1,19 +1,21 @@
-# [Project name]
+# Gemini Q&A
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+An interactive Streamlit app that sends user questions to Google Gemini and displays generated answers.
 
 ## Run & Operate
 
+- `streamlit run app.py --server.port 8000 --server.headless true --browser.gatherUsageStats false` — run the app
 - `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- Required secret: `GEMINI_API_KEY` — Google Gemini API key
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
+- Python, Streamlit, Google GenAI SDK
 - API: Express 5
 - DB: PostgreSQL + Drizzle ORM
 - Validation: Zod (`zod/v4`), `drizzle-zod`
@@ -22,15 +24,18 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `app.py` — Streamlit interface and Gemini request flow
+- `requirements.txt` — Python dependencies
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Gemini access stays server-side through the `GEMINI_API_KEY` secret; the key is never embedded in source code.
+- The current `google-genai` SDK is used instead of the deprecated `google-generativeai` package.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Users can submit a free-form question and receive an AI-generated answer from Gemini.
+- Empty submissions and API/configuration errors are surfaced inline.
 
 ## User preferences
 

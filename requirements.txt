@@ -1,0 +1,6 @@
+streamlit
+google-genai
+google-generativeai
+streamlit
+google-genai
+sift-stack-py
