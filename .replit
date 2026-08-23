@@ -29,8 +29,8 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "streamlit run app.py --server.port 8000 --server.headless true --browser.gatherUsageStats false"
-waitForPort = 8000
+args = "streamlit run app.py --server.port 5000 --server.headless true --browser.gatherUsageStats false"
+waitForPort = 5000
 
 [agent]
 stack = "PNPM_WORKSPACE"
