@@ -5,9 +5,21 @@ from google import genai
 
 
 st.set_page_config(
-    page_title="Gemini Q&A",
+    page_title="Cognivolt AI",
     page_icon="✦",
     layout="centered",
+)
+
+st.markdown(
+    """
+    <style>
+    .stTextArea textarea {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
 )
 
 
@@ -27,12 +39,14 @@ def get_answer(question: str) -> str:
 
     answer = getattr(response, "text", None)
     if not answer:
-        raise RuntimeError("Gemini returned an empty response. Please try another question.")
+        raise RuntimeError(
+            "Gemini returned an empty response. Please try another question."
+        )
     return answer
 
 
-st.title("Gemini Q&A")
-st.write("Ask a question and get a thoughtful answer powered by Google Gemini.")
+st.title("Cognivolt AI")
+st.write("Ask a question and get a thoughtful answer powered by Cognivolt AI.")
 
 with st.form("question_form"):
     question = st.text_area(
