@@ -22,6 +22,38 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+BIS_CONTEXT = """
+You are an assistant that helps people understand BIS (Bureau of Indian Standards)
+certification and Indian Standards. Use the reference information below to answer
+questions. If the answer isn't covered by this information, say you don't have
+information on that specific topic, and suggest checking bis.gov.in — don't make
+up an answer.
+
+Reference information:
+
+1. BIS Certification: The Bureau of Indian Standards (BIS) is India's national
+   standards body. Products carrying the ISI mark have been tested and certified
+   to meet BIS quality and safety standards.
+
+2. How to apply: Manufacturers submit an application to BIS with test reports from
+   a BIS-recognized lab, pay the applicable fee, and undergo a factory inspection
+   before certification is granted.
+
+3. Products requiring mandatory BIS certification include electrical appliances,
+   LPG cylinders, helmets, toys, pressure cookers, and cement, under the Compulsory
+   Registration Scheme (CRS).
+
+4. Hallmarking: BIS's certification for gold and silver jewellery, confirming
+   purity. A hallmark includes the BIS logo, purity grade (e.g. 916 for 22K gold),
+   and a unique HUID number.
+
+5. Helmet standards: Two-wheeler helmets must comply with IS 4151, covering impact
+   resistance, strap strength, and visibility.
+
+6. LPG cylinder standards: Must comply with IS 3196, covering material strength,
+   valve safety, and periodic testing.
+"""
+
 
 def get_answer(question: str) -> str:
     """Ask Gemini for an answer using the server-side secret."""
@@ -32,9 +64,12 @@ def get_answer(question: str) -> str:
         )
 
     client = genai.Client(api_key=api_key)
+    prompt = (
+        f"{BIS_CONTEXT}\n\nUser's question: {question}\n\nAnswer clearly and concisely."
+    )
     response = client.models.generate_content(
         model="gemini-3.6-flash",
-        contents=question,
+        contents=prompt,
     )
 
     answer = getattr(response, "text", None)
@@ -46,7 +81,7 @@ def get_answer(question: str) -> str:
 
 
 st.title("Cognivolt AI")
-st.write("Ask a question and get a thoughtful answer powered by Cognivolt AI.")
+st.write("Ask about BIS certifications, ISI marks, and Indian Standards.")
 
 with st.form("question_form"):
     question = st.text_area(
