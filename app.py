@@ -24,10 +24,15 @@ st.markdown(
 
 BIS_CONTEXT = """
 You are an assistant that helps people understand BIS (Bureau of Indian Standards)
-certification and Indian Standards. Use the reference information below to answer
-questions. If the answer isn't covered by this information, say you don't have
-information on that specific topic, and suggest checking bis.gov.in — don't make
-up an answer.
+certification and Indian Standards. Give thorough, well-explained answers — include
+context, practical steps, and examples where helpful, not just a one-line answer.
+
+Treat the reference information below as your source of truth for specific facts,
+standard numbers, and figures — don't contradict it. You may also draw on your
+general knowledge of India's regulatory and certification landscape to explain
+concepts more fully, as long as it stays consistent with the reference information.
+If a question is genuinely unrelated to BIS/Indian Standards, say so honestly rather
+than guessing.
 
 Reference information:
 
@@ -64,9 +69,7 @@ def get_answer(question: str) -> str:
         )
 
     client = genai.Client(api_key=api_key)
-    prompt = (
-        f"{BIS_CONTEXT}\n\nUser's question: {question}\n\nAnswer clearly and concisely."
-    )
+    prompt = f"{BIS_CONTEXT}\n\nUser's question: {question}\n\nProvide a detailed, well-explained answer with relevant context or examples."
     response = client.models.generate_content(
         model="gemini-3.6-flash",
         contents=prompt,
@@ -83,24 +86,28 @@ def get_answer(question: str) -> str:
 st.title("Cognivolt AI")
 st.write("Ask about BIS certifications, ISI marks, and Indian Standards.")
 
-with st.form("question_form"):
-    question = st.text_area(
-        "Your question",
-        placeholder="What would you like to know?",
-        height=140,
-    )
-    submitted = st.form_submit_button("Get answer", type="primary")
+# Keep track of the conversation across questions
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-if submitted:
-    question = question.strip()
-    if not question:
-        st.warning("Please enter a question first.")
-    else:
+# Redraw all previous messages every time the page updates
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+# Chat input box, pinned to the bottom like Grok/ChatGPT
+question = st.chat_input("What would you like to know?")
+
+if question:
+    st.session_state.messages.append({"role": "user", "content": question})
+    with st.chat_message("user"):
+        st.markdown(question)
+
+    with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             try:
                 answer = get_answer(question)
             except Exception as error:
-                st.error(f"Unable to get an answer: {error}")
-            else:
-                st.subheader("Answer")
-                st.markdown(answer)
+                answer = f"Unable to get an answer: {error}"
+        st.markdown(answer)
+    st.session_state.messages.append({"role": "assistant", "content": answer})
