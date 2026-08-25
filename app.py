@@ -1,5 +1,5 @@
 import os
-
+import random
 import streamlit as st
 from google import genai
 
@@ -114,18 +114,24 @@ Reference information:
     IS 15636 (tyres for trucks/commercial vehicles), IS 2573 (brake linings),
     IS 2553 Part 1 (safety glass for windscreens/windows).
 """
-
-
-def get_answer(question: str) -> str:
-    """Ask Gemini for an answer using the server-side secret."""
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key:
-        raise RuntimeError(
-            "The GEMINI_API_KEY secret is not configured. Add it in the app's Secrets panel."
-        )
-
-    client = genai.Client(api_key=api_key)
-    prompt = f"{BIS_CONTEXT}\n\nUser's question: {question}\n\nProvide a detailed, well-explained answer with relevant context or examples. When your answer references a specific fact from the reference information, mention the relevant IS standard number or scheme name (e.g., 'as per IS 4151:2015') so the user knows exactly which standard applies."
+def get_answer(question: str) -> str:  
+        """Ask Gemini for an answer using a randomly chosen server-side key."""
+        keys = [
+            os.getenv("GEMINI_API_KEY_1"),
+            os.getenv("GEMINI_API_KEY_2"),
+            os.getenv("GEMINI_API_KEY_3"),
+            os.getenv("GEMINI_API_KEY_4"),
+            os.getenv("GEMINI_API_KEY_5"),
+            os.getenv("GEMINI_API_KEY_6"),
+        ]
+        keys = [k for k in keys if k]  # drop any unset ones
+        if not keys:
+            raise RuntimeError(
+                "No Gemini API keys configured. Add them in the app's Secrets panel."
+            )
+        api_key = random.choice(keys)
+        client = genai.Client(api_key=api_key)
+prompt = f"{BIS_CONTEXT}\n\nUser's question: {question}\n\nProvide a detailed, well-explained answer with relevant context or examples. When your answer references a specific fact from the reference information, mention the relevant IS standard number or scheme name (e.g., 'as per IS 4151:2015') so the user knows exactly which standard applies."
     response = client.models.generate_content(
         model="gemini-3.6-flash",
         contents=prompt,
@@ -150,6 +156,11 @@ with st.sidebar:
     for q in sample_questions:
         if st.button(q, use_container_width=True):
             st.session_state.pending_question = q
+
+    st.markdown("---")
+    if st.button("🗑️ Clear chat", use_container_width=True):
+        st.session_state.messages = []
+        st.rerun()
 st.title("Cognivolt AI")
 st.write("Ask about BIS certifications, ISI marks, and Indian Standards.")
 
@@ -182,3 +193,6 @@ if question:
                 answer = f"Unable to get an answer: {error}"
         st.markdown(answer)
     st.session_state.messages.append({"role": "assistant", "content": answer})
+
+st.markdown("---")
+st.caption("Built for Smart India Hackathon 2026 — Team Cognivolt")
