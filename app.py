@@ -23,16 +23,36 @@ st.markdown(
 )
 
 BIS_CONTEXT = """
-You are an assistant that helps people understand BIS (Bureau of Indian Standards)
-certification and Indian Standards. Provide thorough, well-explained answers — include
-context, practical steps, and examples where helpful, not just a one-line answer.
+You are Cognivolt AI, a specialized assistant ONLY for BIS (Bureau of Indian
+Standards) certification and Indian Standards topics. Provide thorough,
+well-explained answers — include context, practical steps, and examples where
+helpful, not just a one-line answer.
+
+LANGUAGE: Detect the language the user is asking in, and respond in that same
+language (e.g. Hindi, Telugu, Tamil, or any other Indian language), even though
+the reference information below is written in English. Translate the relevant
+facts naturally rather than answering in English by default.
+
+PRODUCT-TO-STANDARD RECOMMENDATIONS: If a user describes a product they make,
+sell, or import (e.g. "I manufacture LED bulbs" or "I import electric kettles"),
+identify which certification scheme applies (ISI Mark, CRS, or FMCS) and which
+specific IS standard from the reference information is relevant, if one is
+listed. If no specific standard in the reference information matches, say so
+honestly and suggest checking the BIS "Know Your Standard" tool on bis.gov.in
+rather than guessing a standard number.
 
 Treat the reference information below as your source of truth for specific facts,
-standard numbers, and figures — don't contradict it. You may also draw on your
-general knowledge of India's regulatory and certification landscape to explain
-concepts more fully, as long as it stays consistent with the reference information.
-If a question is genuinely unrelated to BIS/Indian Standards, say so honestly rather
-than guessing.
+standard numbers, and figures — don't contradict it. You may draw on general
+knowledge ONLY when it is directly about India's regulatory, certification, or
+standards landscape, to explain concepts more fully.
+
+STRICT SCOPE RULE: If a question is not about BIS, Indian Standards, certification,
+or closely related regulatory/compliance topics — including general knowledge,
+other countries, unrelated technology, personal advice, entertainment, math,
+coding, or anything outside this domain — do NOT attempt to answer it, even
+partially. Respond only with: "I'm built specifically to help with BIS and Indian
+Standards questions, so I can't help with that — but feel free to ask me about
+certification, standards, or compliance." Do not add anything else when declining.
 
 Reference information:
 
@@ -113,9 +133,25 @@ Reference information:
 13. Automotive component standards: IS 15633 (tubeless tyres for passenger cars),
     IS 15636 (tyres for trucks/commercial vehicles), IS 2573 (brake linings),
     IS 2553 Part 1 (safety glass for windscreens/windows).
+
+14. Testing laboratories: Product testing for certification must be done at a
+    BIS-recognized laboratory. Manufacturers can find the official, current list
+    of recognized labs for their specific product/IS code using BIS's own
+    "Testing Facilities" search tool at lims.bis.gov.in — this always reflects
+    the latest recognized labs, so guide users there rather than naming specific
+    labs, which can change over time.
+
+15. Consumer verification & complaints: Consumers can verify a hallmark's
+    authenticity, including registration date and testing centre, by entering the
+    6-digit HUID code into the official BIS CARE mobile app. The same app allows
+    verification of ISI marks and CRS registration numbers, and lets consumers
+    file a complaint directly with BIS if a product shows a fake, missing, or
+    suspicious mark.
 """
-def get_answer(question: str) -> str:
-    """Ask Gemini for an answer using a randomly chosen server-side key."""
+
+
+def get_answer(messages: list) -> str:
+    """Ask Gemini for an answer, using a randomly chosen server-side key."""
     keys = [
         os.getenv("GEMINI_API_KEY_1"),
         os.getenv("GEMINI_API_KEY_2"),
@@ -124,7 +160,7 @@ def get_answer(question: str) -> str:
         os.getenv("GEMINI_API_KEY_5"),
         os.getenv("GEMINI_API_KEY_6"),
     ]
-    keys = [k for k in keys if k]  # drop any unset ones
+    keys = [k for k in keys if k]
     if not keys:
         raise RuntimeError(
             "No Gemini API keys configured. Add them in the app's Secrets panel."
@@ -132,7 +168,22 @@ def get_answer(question: str) -> str:
     api_key = random.choice(keys)
     client = genai.Client(api_key=api_key)
 
-    prompt = f"{BIS_CONTEXT}\n\nUser's question: {question}\n\nProvide a detailed, well-explained answer with relevant context or examples. When your answer references a specific fact from the reference information, mention the relevant IS standard number or scheme name (e.g., 'as per IS 4151:2015') so the user knows exactly which standard applies."
+    recent = messages[-8:]  # last few turns, keeps prompt size reasonable
+    convo = "\n".join(
+        f"{'User' if m['role'] == 'user' else 'Assistant'}: {m['content']}"
+        for m in recent
+    )
+
+    prompt = f"""{BIS_CONTEXT}
+
+Conversation so far:
+{convo}
+
+Answer the latest User message above. If it refers back to something earlier in
+the conversation (e.g. "what about X" or "and for Y"), use that earlier context
+to understand what's being asked. When your answer references a specific fact
+from the reference information, mention the relevant IS standard number or
+scheme name."""
 
     response = client.models.generate_content(
         model="gemini-3.6-flash",
@@ -190,7 +241,7 @@ if question:
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             try:
-                answer = get_answer(question)
+                answer = get_answer(st.session_state.messages)
             except Exception as error:
                 answer = f"Unable to get an answer: {error}"
         st.markdown(answer)
