@@ -755,11 +755,5 @@ if question:
         st.markdown(answer)
     st.session_state.messages.append({"role": "assistant", "content": answer})
 
-    # Citation panel in sidebar
-    if citations:
-        with st.sidebar.expander("📚 Sources Used", expanded=False):
-            for entry_num in citations:
-                st.caption(f"Entry {entry_num}")
-
 st.markdown("---")
 st.caption("Built for Smart India Hackathon 2026 — Team Cognivolt")
