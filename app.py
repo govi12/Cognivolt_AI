@@ -646,6 +646,395 @@ CITATION_INDEX = {
     "verify": [15, 61, 124, 141, 142, 143],
 }
 
+CATEGORIES = {
+    "Electrical & Electronics": {
+        "LED Lamps (self-ballasted)": {
+            "scheme": "CRS",
+            "is": "IS 16102",
+            "entries": [30],
+        },
+        "LED Luminaires (street, flood, downlight)": {
+            "scheme": "CRS",
+            "is": "IS 10322 Parts 5-1 to 5-6",
+            "entries": [31],
+        },
+        "Electric Fans (ceiling, table, pedestal)": {
+            "scheme": "ISI",
+            "is": "IS 374",
+            "entries": [19],
+        },
+        "PVC Insulated Cables (up to 1100V)": {
+            "scheme": "ISI",
+            "is": "IS 694",
+            "entries": [20],
+        },
+        "Switches for Household Use": {
+            "scheme": "ISI",
+            "is": "IS 3854",
+            "entries": [21],
+        },
+        "Energy Meters (static)": {
+            "scheme": "CRS",
+            "is": "IS 13779, IS 16444",
+            "entries": [45],
+        },
+        "Electric Irons": {"scheme": "ISI", "is": "IS 366", "entries": [46]},
+        "Mixer Grinders": {"scheme": "ISI", "is": "IS 4250", "entries": [47]},
+        "Room Air Conditioners": {"scheme": "CRS", "is": "IS 1391", "entries": [48]},
+        "Refrigerators": {"scheme": "CRS", "is": "IS 1391 Part 2", "entries": [49]},
+        "Washing Machines": {"scheme": "CRS", "is": "IS 1391 Part 3", "entries": [50]},
+        "Microwave Ovens": {"scheme": "CRS", "is": "IS 11676", "entries": [51]},
+        "Audio/Video Equipment (TVs, monitors)": {
+            "scheme": "CRS",
+            "is": "IS 616 / IEC 60065",
+            "entries": [52],
+        },
+        "Plugs and Socket-Outlets": {"scheme": "ISI", "is": "IS 1293", "entries": [53]},
+        "Circuit Breakers (MCB/RCCB)": {
+            "scheme": "ISI",
+            "is": "IS 8828, IS 12640",
+            "entries": [54],
+        },
+    },
+    "Construction Materials": {
+        "Cement — Ordinary Portland (OPC 33/43/53)": {
+            "scheme": "ISI",
+            "is": "IS 269, IS 455, IS 1489",
+            "entries": [23],
+        },
+        "Cement — Portland Pozzolana (PPC)": {
+            "scheme": "ISI",
+            "is": "IS 1489 Part 1 & 2",
+            "entries": [109],
+        },
+        "Cement — Rapid Hardening": {
+            "scheme": "ISI",
+            "is": "IS 8041",
+            "entries": [110],
+        },
+        "Steel Bars for Concrete Reinforcement": {
+            "scheme": "ISI",
+            "is": "IS 1786",
+            "entries": [24],
+        },
+        "Steel Pipes for Water/Gas": {
+            "scheme": "ISI",
+            "is": "IS 1239, IS 3589",
+            "entries": [25],
+        },
+        "UPVC Pipes for Water Supply": {
+            "scheme": "ISI",
+            "is": "IS 4985",
+            "entries": [26],
+        },
+        "CPVC Pipes for Hot/Cold Water": {
+            "scheme": "ISI",
+            "is": "IS 15778",
+            "entries": [27],
+        },
+        "Stainless Steel Sheets/Plates": {
+            "scheme": "ISI",
+            "is": "IS 6911",
+            "entries": [41],
+        },
+        "Stainless Steel Bars/Wire": {
+            "scheme": "ISI",
+            "is": "IS 1570, IS 6529, IS 3444",
+            "entries": [42],
+        },
+        "Aluminium Conductors (AAC/AAAC/ACSR)": {
+            "scheme": "ISI",
+            "is": "IS 398",
+            "entries": [43],
+        },
+    },
+    "Automotive": {
+        "Two-Wheeler Helmets": {"scheme": "ISI", "is": "IS 4151:2015", "entries": [29]},
+        "Cycle Helmets": {"scheme": "ISI", "is": "IS 10865", "entries": [76]},
+        "Tyres (Car/Truck/Bus)": {
+            "scheme": "ISI",
+            "is": "IS 15633, IS 15636",
+            "entries": [57],
+        },
+        "Safety Glass (Windscreen/Window)": {
+            "scheme": "ISI",
+            "is": "IS 2553 Part 1",
+            "entries": [58],
+        },
+        "Brake Linings": {"scheme": "ISI", "is": "IS 2573", "entries": [59]},
+        "Automotive Lighting": {
+            "scheme": "ISI",
+            "is": "IS 15588, IS 15589",
+            "entries": [56],
+        },
+        "Wires and Cables for Automotive": {
+            "scheme": "ISI",
+            "is": "IS 2465, IS 6380",
+            "entries": [55],
+        },
+    },
+    "LPG & Gas Appliances": {
+        "LPG Cylinders (>5L)": {
+            "scheme": "ISI",
+            "is": "IS 3196 Part 1",
+            "entries": [8],
+        },
+        "LPG Cylinders (<5L)": {"scheme": "ISI", "is": "IS 7142", "entries": [94]},
+        "LPG Cylinder Valves": {"scheme": "ISI", "is": "IS 8737", "entries": [93]},
+        "LPG Domestic Gas Stoves": {"scheme": "ISI", "is": "IS 4246", "entries": [22]},
+        "LPG Rubber Hoses": {"scheme": "ISI", "is": "IS 9573", "entries": [91]},
+        "LPG Regulators (Domestic)": {
+            "scheme": "ISI",
+            "is": "IS 9798",
+            "entries": [92],
+        },
+        "Domestic Gas Water Heaters": {
+            "scheme": "ISI",
+            "is": "IS 15558",
+            "entries": [72],
+        },
+        "Domestic Gas Room Heaters": {
+            "scheme": "ISI",
+            "is": "IS 15559",
+            "entries": [72],
+        },
+        "Kerosene Stoves": {"scheme": "ISI", "is": "IS 13592", "entries": [73]},
+        "CNG Cylinders (Vehicular)": {
+            "scheme": "ISI",
+            "is": "IS 15490",
+            "entries": [95],
+        },
+    },
+    "Food, Water & Infant Products": {
+        "Packaged Drinking Water": {"scheme": "ISI", "is": "IS 14543", "entries": [38]},
+        "Packaged Natural Mineral Water": {
+            "scheme": "ISI",
+            "is": "IS 13428",
+            "entries": [39],
+        },
+        "Milk Powder": {"scheme": "ISI", "is": "IS 1165", "entries": [40]},
+        "Infant Milk Substitutes": {"scheme": "ISI", "is": "IS 14433", "entries": [40]},
+        "HDPE Pipes for Potable Water": {
+            "scheme": "ISI",
+            "is": "IS 4984",
+            "entries": [10],
+        },
+    },
+    "Toys & Safety Equipment": {
+        "Toys (Mechanical/Physical Safety)": {
+            "scheme": "ISI/CRS",
+            "is": "IS 9873 Part 1",
+            "entries": [28],
+        },
+        "Toys (Flammability)": {
+            "scheme": "ISI/CRS",
+            "is": "IS 9873 Part 2",
+            "entries": [28],
+        },
+        "Toys (Chemical Safety - Heavy Metals)": {
+            "scheme": "ISI/CRS",
+            "is": "IS 9873 Parts 3 & 9",
+            "entries": [28],
+        },
+        "Industrial Safety Helmets": {
+            "scheme": "ISI",
+            "is": "IS 2925:1984",
+            "entries": [81],
+        },
+        "Firefighter Helmets": {"scheme": "ISI", "is": "IS 2745:1983", "entries": [82]},
+        "Respiratory Protective Devices": {
+            "scheme": "ISI",
+            "is": "IS 9473, IS 15322",
+            "entries": [83],
+        },
+        "Eye/Face Protection": {
+            "scheme": "ISI",
+            "is": "IS 5983, IS 1179",
+            "entries": [84],
+        },
+        "Hearing Protection": {
+            "scheme": "ISI",
+            "is": "IS 6229, IS 12079",
+            "entries": [85],
+        },
+        "Fall Protection Equipment": {
+            "scheme": "ISI",
+            "is": "IS 3521, IS 3522",
+            "entries": [86],
+        },
+        "School Bags": {"scheme": "ISI", "is": "IS 15824", "entries": [77]},
+    },
+    "Hallmarking & Jewellery": {
+        "Gold Hallmarking (22K/18K/14K/9K)": {
+            "scheme": "Hallmarking",
+            "is": "IS 1417 (purity grades)",
+            "entries": [6, 60, 114, 115],
+        },
+        "Silver Hallmarking": {
+            "scheme": "Hallmarking",
+            "is": "IS 2112 (purity grades)",
+            "entries": [6, 60],
+        },
+        "Jeweller Registration": {
+            "scheme": "Hallmarking",
+            "is": "Form-V on manakonline.in",
+            "entries": [114],
+        },
+        "AHC Recognition": {
+            "scheme": "Hallmarking",
+            "is": "Form-VI on manakonline.in",
+            "entries": [115],
+        },
+    },
+    "Industrial & Specialized": {
+        "Pressure Cookers (Aluminium/Stainless Steel)": {
+            "scheme": "ISI",
+            "is": "IS 2347, IS 4251",
+            "entries": [17],
+        },
+        "Domestic Water Heaters (Electric)": {
+            "scheme": "ISI",
+            "is": "IS 302-2-35",
+            "entries": [18],
+        },
+        "Distribution Transformers": {
+            "scheme": "ISI",
+            "is": "IS 1180",
+            "entries": [44],
+        },
+        "Secondary Lithium-Ion Batteries": {
+            "scheme": "CRS",
+            "is": "IS 16046",
+            "entries": [32],
+        },
+        "Inverters/UPS (up to 10 kVA)": {
+            "scheme": "CRS",
+            "is": "IS 16221",
+            "entries": [33],
+        },
+        "Solar PV Modules": {
+            "scheme": "CRS",
+            "is": "IS 14286, IS 16170",
+            "entries": [34],
+        },
+        "Solar PV Inverters": {
+            "scheme": "CRS",
+            "is": "IS 16221 / IEC 62109",
+            "entries": [35],
+        },
+        "Medical Devices (Notified)": {
+            "scheme": "ISI/CRS",
+            "is": "IS 16142",
+            "entries": [36],
+        },
+        "Cosmetics": {
+            "scheme": "Voluntary/ISI",
+            "is": "IS 4707, IS 6356, IS 5383",
+            "entries": [37],
+        },
+        "Fire Extinguishers": {
+            "scheme": "ISI",
+            "is": "IS 15683, IS 16018",
+            "entries": [88],
+        },
+        "Fire Hoses": {"scheme": "ISI", "is": "IS 636, IS 8423", "entries": [89]},
+        "Industrial Explosives": {
+            "scheme": "ISI",
+            "is": "IS 4967, IS 5513, IS 5514",
+            "entries": [104],
+        },
+        "Detonators": {"scheme": "ISI", "is": "IS 2572, IS 4067", "entries": [105]},
+        "Welding Electrodes": {
+            "scheme": "ISI",
+            "is": "IS 814, IS 5206, IS 13955",
+            "entries": [99, 100, 101],
+        },
+        "Bicycle Tyres/Tubes": {
+            "scheme": "ISI",
+            "is": "IS 15627, IS 15628",
+            "entries": [75],
+        },
+        "Bicycle Reflectors": {"scheme": "ISI", "is": "IS 6351", "entries": [74]},
+        "PVC Materials": {
+            "scheme": "ISI",
+            "is": "IS 10151, IS 4985, IS 15778, IS 6719, IS 13592, IS 9537",
+            "entries": [11],
+        },
+    },
+    "Emerging Categories": {
+        "Smart Home Devices (IoT)": {
+            "scheme": "CRS (likely)",
+            "is": "Check CRS notified list",
+            "entries": [149],
+        },
+        "Wearables (Health Monitoring)": {
+            "scheme": "CDSCO + CRS",
+            "is": "Medical + safety standards",
+            "entries": [149],
+        },
+        "EV Charging Equipment": {
+            "scheme": "CRS/ISI",
+            "is": "IS 17017 series",
+            "entries": [149],
+        },
+        "Drone Components": {
+            "scheme": "Check QCO dashboard",
+            "is": "Emerging standards",
+            "entries": [149],
+        },
+        "5G Equipment": {
+            "scheme": "TEC + CRS",
+            "is": "Telecom + safety/EMC",
+            "entries": [149],
+        },
+    },
+}
+
+CHECKLISTS = {
+    "ISI Mark (Scheme-I)": [
+        "Identify applicable IS standard via 'Know Your Standard' tool (bis.gov.in)",
+        "Preliminary testing at BIS-recognized lab (test report ≤90 days old)",
+        "Prepare factory layout with QC areas marked",
+        "Prepare quality control manual (product-specific)",
+        "Prepare machinery list with capacity, make, year",
+        "Document raw material sources + supplier details",
+        "Maintain test records & calibration certificates",
+        "Register on manakonline.in → fill Form-I/II",
+        "Pay scrutiny fee (₹1,000) + marking fee advance",
+        "Factory inspection by BIS officer (QC, testing, records)",
+        "Pay license fee + marking fee → license granted (up to 5 years)",
+        "Ongoing: annual fee, surveillance visits (min 1/year), market samples tested",
+    ],
+    "CRS (Compulsory Registration Scheme)": [
+        "Confirm product in CRS notified list (bis.gov.in → CRS → Notified Products)",
+        "Test at BIS-recognized lab (report ≤90 days, all applicable IS/IEC standards)",
+        "Register on manakonline.in → fill Form-III",
+        "Upload test report + declaration + fees",
+        "No factory inspection required",
+        "BIS verifies documents → grants registration number (R-xxxxxxx)",
+        "Mark product with Standard Mark + R-number",
+        "Validity: 2 years, renewable",
+        "Surveillance: market samples picked by BIS, tested at recognized labs",
+    ],
+    "FMCS (Foreign Manufacturers Certification Scheme)": [
+        "Foreign manufacturer appoints Authorized Indian Representative (AIR) — Indian entity with DSC",
+        "AIR applies on manakonline.in → Form-IV + manufacturer's QC docs + test reports",
+        "BIS scrutiny → factory inspection in foreign country (BIS officer or empanelled agency)",
+        "Manufacturer pays inspection charges (travel, daily allowance in USD) + marking fee in USD",
+        "License granted (1-2 years initially) → product marked with ISI + license number",
+        "Renewal: re-inspection or documentary review",
+        "Surveillance visits periodic",
+    ],
+    "Hallmarking (Jeweller Registration)": [
+        "Register on manakonline.in → Form-V + GSTIN + PAN + premises proof",
+        "Pay registration fee (₹25,000 for 5 years) + security deposit",
+        "BIS verifies → grants jeweller registration number (JRN)",
+        "Send articles to BIS-recognized AHC (Assaying & Hallmarking Centre)",
+        "AHC tests purity (XRF/fire assay) → applies hallmark (3 marks: BIS logo + purity + HUID)",
+        "HUID = 6-digit alphanumeric, unique per article, trackable on BIS CARE app",
+    ],
+}
+
 
 def extract_citations(answer_text, citation_index):
     found = set()
@@ -668,7 +1057,9 @@ def get_answer_stream(messages: list):
     ]
     keys = [k for k in keys if k]
     if not keys:
-        raise RuntimeError("No Gemini API keys configured.")
+        raise RuntimeError(
+            "No Gemini API keys configured. Add them in the app's Secrets panel."
+        )
 
     api_key = random.choice(keys)
     client = genai.Client(api_key=api_key)
@@ -713,40 +1104,31 @@ scheme name."""
             yield chunk.text
 
 
-with st.sidebar:
-    st.markdown("### Try asking:")
-    sample_questions = [
-        "What is an ISI mark?",
-        "How do I apply for BIS certification?",
-        "What standard applies to two-wheeler helmets?",
-        "What does hallmarking mean for gold?",
-    ]
-    for q in sample_questions:
-        if st.button(q, use_container_width=True):
-            st.session_state.pending_question = q
+# ==================== UI ====================
 
-    st.markdown("---")
-    if st.button("🗑️ Clear chat", use_container_width=True):
-        st.session_state.messages = []
-        st.rerun()
 st.title("Cognivolt AI")
-st.write("Ask about BIS certifications, ISI marks, and Indian Standards.")
 
-# Keep track of the conversation across questions
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+# Tab definitions
+tab_home, tab_categories, tab_checklists, tab_fee = st.tabs(
+    ["🏠 Home", "📂 Categories", "✅ Checklists", "💰 Fee Calculator"]
+)
 
-# Redraw all previous messages every time the page updates
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+# ----- HOME TAB -----
+with tab_home:
+    st.write("Ask about BIS certifications, ISI marks, and Indian Standards.")
 
-# Chat input box, pinned to the bottom like Grok/ChatGPT
-question = st.chat_input("What would you like to know?")
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
 
-if "pending_question" in st.session_state:
-    question = st.session_state.pending_question
-    del st.session_state.pending_question
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+
+    question = st.chat_input("What would you like to know?")
+
+    if "pending_question" in st.session_state:
+        question = st.session_state.pending_question
+        del st.session_state.pending_question
 
     if question:
         st.session_state.messages.append({"role": "user", "content": question})
@@ -765,6 +1147,126 @@ if "pending_question" in st.session_state:
                 full_answer = f"Unable to get an answer: {error}"
                 placeholder.markdown(full_answer)
         st.session_state.messages.append({"role": "assistant", "content": full_answer})
+
+    # Sidebar - only on Home tab
+    with st.sidebar:
+        st.markdown("### Try asking:")
+        sample_questions = [
+            "What is an ISI mark?",
+            "How do I apply for BIS certification?",
+            "What standard applies to two-wheeler helmets?",
+            "What does hallmarking mean for gold?",
+        ]
+        for q in sample_questions:
+            if st.button(q, use_container_width=True):
+                st.session_state.pending_question = q
+
+        st.markdown("---")
+        if st.button("🗑️ Clear chat", use_container_width=True):
+            st.session_state.messages = []
+            st.rerun()
+
+# ----- CATEGORIES TAB -----
+with tab_categories:
+    st.header("📂 IS Code Explorer")
+    st.caption(
+        "Browse product categories to find applicable IS standards and certification schemes. Click 'Ask' to open a question in the Home tab."
+    )
+
+    for category, products in CATEGORIES.items():
+        with st.expander(category, expanded=False):
+            for product, info in products.items():
+                col1, col2 = st.columns([4, 1])
+                with col1:
+                    st.markdown(f"**{product}**")
+                    st.caption(f"Scheme: `{info['scheme']}` | Standard: `{info['is']}`")
+                with col2:
+                    if st.button("Ask", key=f"ask_{product}", use_container_width=True):
+                        st.session_state.pending_question = (
+                            f"What is the certification process for {product}?"
+                        )
+                        st.rerun()
+
+# ----- CHECKLISTS TAB -----
+with tab_checklists:
+    st.header("✅ Certification Checklists")
+    st.caption(
+        "Step-by-step checklists for each BIS certification scheme. Track your progress."
+    )
+
+    for scheme, steps in CHECKLISTS.items():
+        with st.expander(scheme, expanded=False):
+            st.markdown(f"**{len(steps)} steps**")
+            for i, step in enumerate(steps, 1):
+                st.checkbox(f"{i}. {step}", key=f"check_{scheme}_{i}")
+
+# ----- FEE CALCULATOR TAB -----
+with tab_fee:
+    st.header("💰 BIS Fee Calculator")
+    st.caption(
+        "Estimate marking fees with MSME concessions. Figures are approximate — verify on bis.gov.in/fee-structure."
+    )
+
+    col1, col2 = st.columns(2)
+    with col1:
+        scheme = st.selectbox(
+            "Certification Scheme", ["ISI Mark (Scheme-I)", "CRS", "FMCS"]
+        )
+        category = st.selectbox(
+            "Enterprise Category",
+            ["Micro/Startup", "Small", "Medium", "Large (no concession)"],
+        )
+    with col2:
+        production_value = st.number_input(
+            "Annual Production Value (₹)", min_value=0, value=10000000, step=100000
+        )
+        is_woman = st.checkbox("Women Entrepreneur")
+        is_ne = st.checkbox("North-East State Unit")
+
+    if st.button("Calculate Fee", use_container_width=True):
+        base_rates = {"ISI Mark (Scheme-I)": 0.005, "CRS": 0.002, "FMCS": 0.01}
+        concessions = {
+            "Micro/Startup": 0.8,
+            "Small": 0.5,
+            "Medium": 0.2,
+            "Large (no concession)": 0.0,
+        }
+
+        base_rate = base_rates.get(scheme, 0.005)
+        concession = concessions.get(category, 0.0)
+        extra = 0.1 if (is_woman or is_ne) else 0.0
+        total_concession = min(concession + extra, 0.9)
+
+        base_fee = production_value * base_rate
+        min_fee = 50000 if "ISI" in scheme else (25000 if "CRS" in scheme else 0)
+        base_fee = max(base_fee, min_fee)
+
+        concession_amount = base_fee * total_concession
+        net_fee = base_fee - concession_amount
+
+        st.markdown("---")
+        st.markdown("### Fee Breakdown")
+        fee_data = {
+            "Item": [
+                "Base Marking Fee",
+                f"Concession ({int(total_concession * 100)}%)",
+                "Net Marking Fee (Annual)",
+            ],
+            "Amount (₹)": [
+                f"{base_fee:,.0f}",
+                f"-{concession_amount:,.0f}",
+                f"{net_fee:,.0f}",
+            ],
+        }
+        st.table(fee_data)
+
+        if "FMCS" in scheme:
+            st.info(
+                "FMCS fees are payable in USD. Marking fee typically $0.50–$2 per unit. Inspection charges (travel, daily allowance) are additional actuals."
+            )
+        st.caption(
+            "Note: Scrutiny fee (₹1,000 for ISI/CRS, ₹5,000 for FMCS) and license fee (₹1,000/year) are separate. Verify latest fees on bis.gov.in/fee-structure before payment."
+        )
 
 st.markdown("---")
 st.caption("Built for Smart India Hackathon 2026 — Team Cognivolt")
