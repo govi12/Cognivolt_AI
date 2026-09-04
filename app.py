@@ -656,8 +656,8 @@ def extract_citations(answer_text, citation_index):
     return sorted(found)
 
 
-def get_answer(messages: list) -> tuple[str, list]:
-    """Ask Gemini for an answer, using a randomly chosen server-side key."""
+def get_answer_stream(messages: list):
+    """Stream Gemini answer token by token."""
     keys = [
         os.getenv("GEMINI_API_KEY_1"),
         os.getenv("GEMINI_API_KEY_2"),
@@ -668,13 +668,12 @@ def get_answer(messages: list) -> tuple[str, list]:
     ]
     keys = [k for k in keys if k]
     if not keys:
-        raise RuntimeError(
-            "No Gemini API keys configured. Add them in the app's Secrets panel."
-        )
+        raise RuntimeError("No Gemini API keys configured.")
+
     api_key = random.choice(keys)
     client = genai.Client(api_key=api_key)
 
-    recent = messages[-8:]  # last few turns, keeps prompt size reasonable
+    recent = messages[-8:]
     convo = "\n".join(
         f"{'User' if m['role'] == 'user' else 'Assistant'}: {m['content']}"
         for m in recent
@@ -691,18 +690,27 @@ to understand what's being asked. When your answer references a specific fact
 from the reference information, mention the relevant IS standard number or
 scheme name."""
 
-    response = client.models.generate_content(
-        model="gemini-3.6-flash",
-        contents=prompt,
-    )
+    import time
 
-    answer = getattr(response, "text", None)
-    if not answer:
-        raise RuntimeError(
-            "Gemini returned an empty response. Please try another question."
-        )
-    citations = extract_citations(answer, CITATION_INDEX)
-    return answer, citations
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            response = client.models.generate_content_stream(
+                model="gemini-3.6-flash",
+                contents=prompt,
+            )
+            break
+        except Exception as e:
+            if (
+                "503" in str(e) or "UNAVAILABLE" in str(e)
+            ) and attempt < max_retries - 1:
+                time.sleep(2**attempt)
+                continue
+            raise
+
+    for chunk in response:
+        if chunk.text:
+            yield chunk.text
 
 
 with st.sidebar:
@@ -740,20 +748,23 @@ if "pending_question" in st.session_state:
     question = st.session_state.pending_question
     del st.session_state.pending_question
 
-if question:
-    st.session_state.messages.append({"role": "user", "content": question})
-    with st.chat_message("user"):
-        st.markdown(question)
+    if question:
+        st.session_state.messages.append({"role": "user", "content": question})
+        with st.chat_message("user"):
+            st.markdown(question)
 
-    with st.chat_message("assistant"):
-        with st.spinner("Thinking..."):
+        with st.chat_message("assistant"):
+            placeholder = st.empty()
+            full_answer = ""
             try:
-                answer, citations = get_answer(st.session_state.messages)
+                for token in get_answer_stream(st.session_state.messages):
+                    full_answer += token
+                    placeholder.markdown(full_answer + "▌")
+                placeholder.markdown(full_answer)
             except Exception as error:
-                answer = f"Unable to get an answer: {error}"
-                citations = []
-        st.markdown(answer)
-    st.session_state.messages.append({"role": "assistant", "content": answer})
+                full_answer = f"Unable to get an answer: {error}"
+                placeholder.markdown(full_answer)
+        st.session_state.messages.append({"role": "assistant", "content": full_answer})
 
 st.markdown("---")
 st.caption("Built for Smart India Hackathon 2026 — Team Cognivolt")
