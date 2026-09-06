@@ -2,422 +2,26 @@ import os
 import random
 import streamlit as st
 from google import genai
-from typing import TypedDict, Generator
-
-# ==================== TYPE DEFINITIONS ====================
-ProductInfo = TypedDict("ProductInfo", {"scheme": str, "is": str})
-CategoryInfo = TypedDict("CategoryInfo", {"icon": str, "items": dict[str, ProductInfo]})
 
 
 st.set_page_config(
     page_title="Cognivolt AI",
     page_icon="✦",
-    layout="wide",
-    initial_sidebar_state="collapsed",
+    layout="centered",
 )
 
-# ==================== LUXURY PROFESSIONAL CSS ====================
 st.markdown(
     """
-<style>
-/* ===== CSS CUSTOM PROPERTIES ===== */
-:root {
-  --ink: #0B0D12;
-  --ink-soft: #1A1D26;
-  --paper: #FAFAF8;
-  --paper-elevated: #FFFFFF;
-  --gold: #C8A84A;
-  --gold-light: #E8D4A0;
-  --gold-dim: #A68B3D;
-  --slate: #3A3F4E;
-  --slate-muted: #6B7280;
-  --line: #E8E6E1;
-  --shadow-ambient: rgba(11, 13, 18, 0.04);
-  --shadow-key: rgba(11, 13, 18, 0.08);
-  --shadow-elevated: rgba(11, 13, 18, 0.12);
-  --radius: 16px;
-  --radius-sm: 10px;
-  --transition-fast: 150ms cubic-bezier(0.2, 0, 0, 1);
-  --transition-base: 250ms cubic-bezier(0.2, 0, 0, 1);
-  --transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --ink: #F5F5F0;
-    --ink-soft: #E8E4DC;
-    --paper: #0E1014;
-    --paper-elevated: #14181E;
-    --gold: #D4B85C;
-    --gold-light: #E8D4A0;
-    --gold-dim: #B8964A;
-    --slate: #A0A8B8;
-    --slate-muted: #7A8290;
-    --line: #2A2E36;
-    --shadow-ambient: rgba(0, 0, 0, 0.3);
-    --shadow-key: rgba(0, 0, 0, 0.4);
-    --shadow-elevated: rgba(0, 0, 0, 0.5);
-  }
-}
-
-/* ===== GLOBAL RESET ===== */
-* { box-sizing: border-box; }
-html, body, [data-testid="stAppViewContainer"] {
-  background: var(--paper) !important;
-  color: var(--ink) !important;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-#MainMenu, header[data-testid="stHeader"], footer, .stDeployButton { display: none !important; }
-[data-testid="stSidebar"] { background: var(--paper-elevated) !important; border-right: 1px solid var(--line) !important; }
-
-/* ===== TYPOGRAPHY ===== */
-h1 { font-size: clamp(1.75rem, 3vw, 2.25rem) !important; font-weight: 700 !important; letter-spacing: -0.02em !important; color: var(--ink) !important; margin: 0 0 0.5rem !important; }
-h2 { font-size: clamp(1.25rem, 2vw, 1.5rem) !important; font-weight: 600 !important; letter-spacing: -0.01em !important; color: var(--ink) !important; margin: 0 0 0.5rem !important; }
-h3 { font-size: 1rem !important; font-weight: 600 !important; color: var(--ink) !important; margin: 0 !important; }
-p, .stMarkdown, .stCaption { color: var(--slate) !important; line-height: 1.6 !important; }
-.caption { font-size: 0.8125rem !important; color: var(--slate-muted) !important; }
-
-/* ===== NATIVE TABS STYLING ===== */
-.stTabs [data-baseweb="tab-list"] {
-  gap: 8px;
-  background: rgba(250, 250, 248, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  padding: 8px;
-  border-radius: 16px;
-  border-bottom: none !important;
-  margin-bottom: 1.5rem;
-}
-@media (prefers-color-scheme: dark) {
-  .stTabs [data-baseweb="tab-list"] { background: rgba(14, 16, 20, 0.85); }
-}
-
-.stTabs [data-baseweb="tab"] {
-  padding: 10px 20px;
-  border-radius: 12px;
-  background: transparent;
-  color: var(--slate-muted);
-  font-weight: 500;
-  font-size: 0.875rem;
-  transition: all var(--transition-base);
-  white-space: nowrap;
-}
-.stTabs [data-baseweb="tab"]:hover { color: var(--ink); background: var(--line); }
-.stTabs [aria-selected="true"] {
-  background: var(--gold) !important;
-  color: var(--paper) !important;
-}
-
-/* ===== BENTO GRID ===== */
-.bento-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
-  padding: 4px;
-}
-@media (max-width: 640px) { .bento-grid { grid-template-columns: 1fr; } }
-
-.bento-card {
-  background: var(--paper-elevated);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 24px;
-  transition: transform var(--transition-spring), box-shadow var(--transition-spring), border-color var(--transition-base);
-  box-shadow: var(--shadow-ambient);
-  position: relative;
-  overflow: hidden;
-}
-.bento-card::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--gold), var(--gold-light));
-  opacity: 0;
-  transition: opacity var(--transition-base);
-}
-.bento-card:hover {
-  transform: translateY(-4px) scale(1.01);
-  box-shadow: var(--shadow-elevated);
-  border-color: var(--gold);
-}
-.bento-card:hover::before { opacity: 1; }
-
-.bento-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
-.bento-icon {
-  width: 44px; height: 44px;
-  display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
-  border-radius: var(--radius-sm);
-  color: var(--paper);
-  font-size: 1.25rem;
-  flex-shrink: 0;
-  box-shadow: var(--shadow-key);
-}
-.bento-badge { font-size: 0.6875rem; font-weight: 600; padding: 4px 10px; background: var(--ink-soft); color: var(--ink); border-radius: 999px; text-transform: uppercase; letter-spacing: 0.05em; }
-.bento-title { font-size: 1.0625rem; font-weight: 600; color: var(--ink); margin: 0 0 4px; letter-spacing: -0.01em; }
-.bento-count { font-size: 0.8125rem; color: var(--slate-muted); margin: 0 0 16px; }
-
-.bento-preview { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
-.bento-preview-item {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 12px;
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  transition: all var(--transition-fast);
-}
-.bento-preview-item:hover { border-color: var(--gold); background: var(--paper-elevated); }
-.bento-preview-name { font-size: 0.8125rem; font-weight: 500; color: var(--ink); }
-.bento-preview-scheme {
-  font-size: 0.6875rem; font-weight: 600; padding: 3px 8px; border-radius: 6px;
-  text-transform: uppercase; letter-spacing: 0.03em;
-}
-.scheme-isi { background: #E8F0FE; color: #1A4DB8; }
-.scheme-crs { background: #E8F5E9; color: #2E7D32; }
-.scheme-fmcs { background: #FFF3E0; color: #E65100; }
-.scheme-hallmark { background: #FEF3C7; color: #B45309; }
-.scheme-other { background: var(--line); color: var(--slate); }
-
-.bento-cta {
-  width: 100%;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 12px;
-  background: transparent;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--slate);
-  cursor: pointer;
-  transition: all var(--transition-base);
-}
-.bento-cta:hover { background: var(--gold); border-color: var(--gold); color: var(--paper); }
-
-.category-expanded { animation: expandDown 300ms cubic-bezier(0.2, 0, 0, 1); }
-@keyframes expandDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
-
-.category-back { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; margin-bottom: 16px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-sm); font-size: 0.8125rem; font-weight: 500; color: var(--slate); cursor: pointer; transition: all var(--transition-fast); }
-.category-back:hover { background: var(--gold); border-color: var(--gold); color: var(--paper); }
-
-.product-list { display: flex; flex-direction: column; gap: 10px; }
-.product-row {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 16px;
-  background: var(--paper-elevated);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  transition: all var(--transition-fast);
-}
-.product-row:hover { border-color: var(--gold); box-shadow: var(--shadow-key); }
-.product-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
-.product-name { font-size: 0.9375rem; font-weight: 500; color: var(--ink); }
-.product-meta { display: flex; align-items: center; gap: 10px; font-size: 0.75rem; }
-.product-scheme { font-weight: 600; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.03em; }
-.product-is { color: var(--slate-muted); font-family: 'SF Mono', 'Monaco', monospace; }
-.product-ask {
-  padding: 8px 16px;
-  background: var(--gold);
-  border: none;
-  border-radius: var(--radius-sm);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--paper);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-}
-.product-ask:hover { background: var(--gold-dim); transform: translateX(2px); }
-
-/* ===== CHAT INTERFACE ===== */
-.chat-container { display: flex; flex-direction: column; height: calc(100vh - 220px); min-height: 500px; }
-.chat-messages { flex: 1; overflow-y: auto; padding: 8px 4px 24px; display: flex; flex-direction: column; gap: 16px; }
-.chat-message { display: flex; gap: 12px; animation: messageIn 300ms cubic-bezier(0.2, 0, 0, 1); }
-@keyframes messageIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-.message-avatar { width: 36px; height: 36px; flex-shrink: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
-.user .message-avatar { background: var(--ink); color: var(--paper); }
-.assistant .message-avatar { background: linear-gradient(135deg, var(--gold), var(--gold-dim)); color: var(--paper); }
-.message-content { flex: 1; min-width: 0; padding-top: 2px; }
-.message-role { font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--slate-muted); margin-bottom: 6px; }
-.message-text { font-size: 0.9375rem; line-height: 1.7; color: var(--ink); white-space: pre-wrap; word-wrap: break-word; }
-.message-text code { background: var(--ink-soft); color: var(--gold); padding: 2px 6px; border-radius: 4px; font-size: 0.8125rem; font-family: 'SF Mono', 'Monaco', monospace; }
-.message-text table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 0.8125rem; }
-.message-text th, .message-text td { padding: 10px 12px; border: 1px solid var(--line); text-align: left; }
-.message-text th { background: var(--ink-soft); font-weight: 600; color: var(--ink); }
-.message-text tr:nth-child(even) td { background: var(--paper); }
-.streaming-cursor { display: inline-block; width: 8px; height: 1.1em; background: var(--gold); margin-left: 2px; animation: cursorPulse 1s ease-in-out infinite; vertical-align: text-bottom; }
-@keyframes cursorPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-.chat-input-area { padding: 16px 0 0; border-top: 1px solid var(--line); margin-top: auto; }
-.chat-input-wrapper { display: flex; gap: 10px; align-items: flex-end; }
-.chat-input { flex: 1; min-height: 52px; max-height: 160px; padding: 14px 18px; background: var(--paper-elevated); border: 1px solid var(--line); border-radius: var(--radius); font-size: 0.9375rem; color: var(--ink); resize: none; transition: all var(--transition-fast); font-family: inherit; line-height: 1.5; }
-.chat-input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200, 168, 74, 0.15); }
-.chat-input::placeholder { color: var(--slate-muted); }
-.chat-send { width: 52px; height: 52px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--ink); border: none; border-radius: var(--radius); color: var(--paper); cursor: pointer; transition: all var(--transition-base); }
-.chat-send:hover { background: var(--gold); transform: scale(1.02); }
-.chat-send:active { transform: scale(0.97); }
-.chat-send svg { width: 20px; height: 20px; }
-
-.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 40px 24px; text-align: center; }
-.empty-icon { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--gold), var(--gold-dim)); display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--paper); margin-bottom: 24px; box-shadow: var(--shadow-elevated); animation: float 3s ease-in-out infinite; }
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-.empty-title { font-size: 1.5rem; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
-.empty-desc { font-size: 1rem; color: var(--slate-muted); max-width: 360px; margin-bottom: 32px; }
-.prompt-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; max-width: 480px; }
-.prompt-card { padding: 16px 20px; background: var(--paper-elevated); border: 1px solid var(--line); border-radius: var(--radius); text-align: left; cursor: pointer; transition: all var(--transition-base); }
-.prompt-card:hover { border-color: var(--gold); box-shadow: var(--shadow-key); transform: translateY(-2px); }
-.prompt-card-icon { width: 36px; height: 36px; border-radius: var(--radius-sm); background: var(--ink-soft); display: flex; align-items: center; justify-content: center; color: var(--ink); font-size: 1rem; margin-bottom: 10px; }
-.prompt-card-title { font-size: 0.875rem; font-weight: 500; color: var(--ink); margin: 0; }
-
-/* ===== CHECKLISTS ===== */
-.checklist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
-.checklist-card { background: var(--paper-elevated); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; transition: all var(--transition-base); }
-.checklist-card:hover { border-color: var(--gold); box-shadow: var(--shadow-key); }
-.checklist-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
-.checklist-title { font-size: 1.0625rem; font-weight: 600; color: var(--ink); margin: 0; }
-.progress-ring { width: 48px; height: 48px; flex-shrink: 0; }
-.checklist-progress { font-size: 0.75rem; font-weight: 600; color: var(--slate-muted); text-align: right; margin-top: 4px; }
-.checklist-items { display: flex; flex-direction: column; gap: 10px; }
-.checklist-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-sm); transition: all var(--transition-fast); cursor: pointer; }
-.checklist-item:hover { border-color: var(--gold); background: var(--paper-elevated); }
-.checklist-item.completed .check-custom { background: var(--gold); border-color: var(--gold); }
-.checklist-item.completed .check-label { color: var(--slate-muted); text-decoration: line-through; }
-.check-custom { width: 22px; height: 22px; flex-shrink: 0; border: 2px solid var(--line); border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: all var(--transition-spring); margin-top: 2px; }
-.check-custom::after { content: "✓"; font-size: 0.75rem; font-weight: 700; color: var(--paper); opacity: 0; transform: scale(0.5); transition: all var(--transition-spring); }
-.checklist-item.completed .check-custom::after { opacity: 1; transform: scale(1); }
-.check-label { flex: 1; font-size: 0.875rem; line-height: 1.5; color: var(--ink); min-width: 0; }
-
-/* ===== FEE CALCULATOR ===== */
-.calculator-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
-@media (max-width: 900px) { .calculator-grid { grid-template-columns: 1fr; } }
-.calc-input-card { background: var(--paper-elevated); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
-.calc-field { margin-bottom: 20px; }
-.calc-label { display: block; font-size: 0.8125rem; font-weight: 500; color: var(--slate); margin-bottom: 8px; }
-.calc-select, .calc-input { width: 100%; padding: 12px 14px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-sm); font-size: 0.9375rem; color: var(--ink); font-family: inherit; transition: all var(--transition-fast); }
-.calc-select:focus, .calc-input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200, 168, 74, 0.15); }
-.calc-checkboxes { display: flex; flex-direction: column; gap: 10px; }
-.calc-checkbox { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-sm); cursor: pointer; transition: all var(--transition-fast); }
-.calc-checkbox:hover { border-color: var(--gold); }
-.calc-checkbox input { width: 20px; height: 20px; accent-color: var(--gold); cursor: pointer; }
-.calc-checkbox label { font-size: 0.875rem; color: var(--ink); cursor: pointer; }
-.calc-result-card { background: var(--paper-elevated); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; position: sticky; top: 100px; }
-.calc-result-title { font-size: 1.0625rem; font-weight: 600; color: var(--ink); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-.result-table { width: 100%; border-collapse: collapse; }
-.result-table td { padding: 14px 16px; border-bottom: 1px solid var(--line); font-size: 0.9375rem; }
-.result-table tr:last-child td { border-bottom: none; }
-.result-label { color: var(--slate); }
-.result-value { font-weight: 600; color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; font-family: 'SF Mono', 'Monaco', monospace; }
-.result-row-total { background: var(--ink-soft); }
-.result-row-total .result-label { font-weight: 600; color: var(--ink); }
-.result-row-total .result-value { color: var(--gold); font-size: 1.125rem; }
-.calc-note { margin-top: 20px; padding: 14px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-sm); font-size: 0.8125rem; color: var(--slate-muted); line-height: 1.6; }
-
-/* ===== SIDEBAR ===== */
-.sidebar-section { padding: 16px 0; border-bottom: 1px solid var(--line); }
-.sidebar-title { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--slate-muted); margin: 0 0 12px; padding: 0 4px; }
-.sidebar-btn { width: 100%; display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: transparent; border: 1px solid var(--line); border-radius: var(--radius-sm); font-size: 0.875rem; color: var(--slate); cursor: pointer; transition: all var(--transition-base); text-align: left; }
-.sidebar-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--paper); }
-.sidebar-divider { height: 1px; background: var(--line); margin: 16px 0; }
-
-/* ===== LUXURY CHECKBOX STYLING ===== */
-.stCheckbox > label > div:first-child { display: none !important; }
-.stCheckbox label {
-  display: flex !important;
-  align-items: flex-start !important;
-  gap: 12px !important;
-  padding: 12px !important;
-  background: var(--paper) !important;
-  border: 1px solid var(--line) !important;
-  border-radius: var(--radius-sm) !important;
-  transition: all var(--transition-fast) !important;
-  cursor: pointer !important;
-}
-.stCheckbox label:hover { border-color: var(--gold) !important; background: var(--paper-elevated) !important; }
-.stCheckbox label::before {
-  content: "" !important;
-  width: 22px !important; height: 22px !important;
-  flex-shrink: 0 !important;
-  border: 2px solid var(--line) !important;
-  border-radius: 6px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  transition: all var(--transition-spring) !important;
-  margin-top: 2px !important;
-}
-.stCheckbox input:checked + div + span::before {
-  background: var(--gold) !important;
-  border-color: var(--gold) !important;
-}
-.stCheckbox input:checked + div + span::after {
-  content: "✓" !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  color: var(--paper) !important;
-  opacity: 1 !important;
-  transform: scale(1) !important;
-}
-.stCheckbox input:not(:checked) + div + span::after {
-  content: "✓" !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  color: var(--paper) !important;
-  opacity: 0 !important;
-  transform: scale(0.5) !important;
-}
-.stCheckbox label > span { flex: 1 !important; font-size: 0.875rem !important; line-height: 1.5 !important; color: var(--ink) !important; min-width: 0 !important; }
-.stCheckbox input:checked + div + span > span { color: var(--slate-muted) !important; text-decoration: line-through !important; }
-
-/* ===== SCROLLBAR ===== */
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; border: 2px solid var(--paper); }
-::-webkit-scrollbar-thumb:hover { background: var(--slate-muted); }
-@media (prefers-color-scheme: dark) { ::-webkit-scrollbar-thumb { border-color: var(--paper); } }
-
-/* ===== SELECTBOX STYLING ===== */
-.stSelectbox > div > div { background: var(--paper) !important; border: 1px solid var(--line) !important; border-radius: var(--radius-sm) !important; }
-.stSelectbox > div > div:focus-within { border-color: var(--gold) !important; box-shadow: 0 0 0 3px rgba(200, 168, 74, 0.15) !important; }
-.stSelectbox label { color: var(--slate) !important; font-size: 0.8125rem !important; font-weight: 500 !important; }
-
-/* ===== NUMBER INPUT ===== */
-.stNumberInput > div > div > input { background: var(--paper) !important; border: 1px solid var(--line) !important; border-radius: var(--radius-sm) !important; color: var(--ink) !important; }
-.stNumberInput > div > div > input:focus { border-color: var(--gold) !important; box-shadow: 0 0 0 3px rgba(200, 168, 74, 0.15) !important; }
-.stNumberInput label { color: var(--slate) !important; font-size: 0.8125rem !important; font-weight: 500 !important; }
-
-/* ===== BUTTON OVERRIDES ===== */
-.stButton > button {
-  background: var(--ink) !important; color: var(--paper) !important;
-  border: none !important; border-radius: var(--radius-sm) !important;
-  padding: 10px 20px !important; font-size: 0.875rem !important; font-weight: 500 !important;
-  transition: all var(--transition-base) !important;
-}
-.stButton > button:hover { background: var(--gold) !important; transform: translateY(-1px) !important; }
-.stButton > button:active { transform: scale(0.98) !important; }
-.stButton > button[kind="secondary"] { background: transparent !important; color: var(--slate) !important; border: 1px solid var(--line) !important; }
-.stButton > button[kind="secondary"]:hover { background: var(--gold) !important; border-color: var(--gold) !important; color: var(--paper) !important; }
-
-/* ===== EXPANDER ===== */
-.streamlit-expanderHeader { background: var(--paper-elevated) !important; border: 1px solid var(--line) !important; border-radius: var(--radius-sm) !important; font-weight: 500 !important; color: var(--ink) !important; padding: 14px 16px !important; }
-.streamlit-expanderContent { background: var(--paper) !important; border: 1px solid var(--line) !important; border-top: none !important; border-radius: 0 0 var(--radius-sm) var(--radius-sm) !important; padding: 16px !important; }
-
-/* ===== ALERT/INFO BOXES ===== */
-.stAlert { border-radius: var(--radius-sm) !important; border: 1px solid var(--line) !important; background: var(--paper-elevated) !important; }
-.stInfo { border-left: 3px solid var(--gold) !important; }
-
-/* ===== TABLE ===== */
-.stTable { border-radius: var(--radius-sm) !important; overflow: hidden; border: 1px solid var(--line) !important; }
-.stTable th { background: var(--ink-soft) !important; color: var(--ink) !important; font-weight: 600 !important; padding: 12px 16px !important; }
-.stTable td { padding: 12px 16px !important; border: 1px solid var(--line) !important; color: var(--ink) !important; }
-.stTable tr:nth-child(even) td { background: var(--paper) !important; }
-</style>
-""",
+    <style>
+    .stTextArea textarea {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    </style>
+    """,
     unsafe_allow_html=True,
 )
 
-# ==================== CONSTANTS ====================
 BIS_CONTEXT = """You are Cognivolt AI, a specialized assistant ONLY for BIS (Bureau of Indian Standards) certification and Indian Standards topics. Provide thorough, well-explained answers — include context, practical steps, and examples where helpful, not just a one-line answer.
 
 LANGUAGE: Detect the language the user is asking in, and respond in that same language (e.g. Hindi, Telugu, Tamil, or any other Indian language), even though the reference information below is written in English. Translate the relevant facts naturally rather than answering in English by default.
@@ -1011,7 +615,7 @@ CITATION_INDEX = {
     "brake": [59],
     "apply": [3, 111, 112, 113, 114],
     "license": [4, 65, 111, 117],
-    "renewal": [4, 65, 111, 117],
+    "renewal": [4, 65, 117],
     "fee": [5, 64, 116],
     "msme": [5, 64, 145],
     "startup": [5, 64, 145],
@@ -1042,196 +646,346 @@ CITATION_INDEX = {
     "verify": [15, 61, 124, 141, 142, 143],
 }
 
-CATEGORIES: dict[str, CategoryInfo] = {
+CATEGORIES = {
     "Electrical & Electronics": {
-        "icon": "⬡",
-        "items": {
-            "LED Lamps (self-ballasted)": {"scheme": "CRS", "is": "IS 16102"},
-            "LED Luminaires (street, flood, downlight)": {
-                "scheme": "CRS",
-                "is": "IS 10322 Parts 5-1 to 5-6",
-            },
-            "Electric Fans (ceiling, table, pedestal)": {
-                "scheme": "ISI",
-                "is": "IS 374",
-            },
-            "PVC Insulated Cables (up to 1100V)": {"scheme": "ISI", "is": "IS 694"},
-            "Switches for Household Use": {"scheme": "ISI", "is": "IS 3854"},
-            "Energy Meters (static)": {"scheme": "CRS", "is": "IS 13779, IS 16444"},
-            "Electric Irons": {"scheme": "ISI", "is": "IS 366"},
-            "Mixer Grinders": {"scheme": "ISI", "is": "IS 4250"},
-            "Room Air Conditioners": {"scheme": "CRS", "is": "IS 1391"},
-            "Refrigerators": {"scheme": "CRS", "is": "IS 1391 Part 2"},
-            "Washing Machines": {"scheme": "CRS", "is": "IS 1391 Part 3"},
-            "Microwave Ovens": {"scheme": "CRS", "is": "IS 11676"},
-            "Audio/Video Equipment (TVs, monitors)": {
-                "scheme": "CRS",
-                "is": "IS 616 / IEC 60065",
-            },
-            "Plugs and Socket-Outlets": {"scheme": "ISI", "is": "IS 1293"},
-            "Circuit Breakers (MCB/RCCB)": {"scheme": "ISI", "is": "IS 8828, IS 12640"},
+        "LED Lamps (self-ballasted)": {
+            "scheme": "CRS",
+            "is": "IS 16102",
+            "entries": [30],
+        },
+        "LED Luminaires (street, flood, downlight)": {
+            "scheme": "CRS",
+            "is": "IS 10322 Parts 5-1 to 5-6",
+            "entries": [31],
+        },
+        "Electric Fans (ceiling, table, pedestal)": {
+            "scheme": "ISI",
+            "is": "IS 374",
+            "entries": [19],
+        },
+        "PVC Insulated Cables (up to 1100V)": {
+            "scheme": "ISI",
+            "is": "IS 694",
+            "entries": [20],
+        },
+        "Switches for Household Use": {
+            "scheme": "ISI",
+            "is": "IS 3854",
+            "entries": [21],
+        },
+        "Energy Meters (static)": {
+            "scheme": "CRS",
+            "is": "IS 13779, IS 16444",
+            "entries": [45],
+        },
+        "Electric Irons": {"scheme": "ISI", "is": "IS 366", "entries": [46]},
+        "Mixer Grinders": {"scheme": "ISI", "is": "IS 4250", "entries": [47]},
+        "Room Air Conditioners": {"scheme": "CRS", "is": "IS 1391", "entries": [48]},
+        "Refrigerators": {"scheme": "CRS", "is": "IS 1391 Part 2", "entries": [49]},
+        "Washing Machines": {"scheme": "CRS", "is": "IS 1391 Part 3", "entries": [50]},
+        "Microwave Ovens": {"scheme": "CRS", "is": "IS 11676", "entries": [51]},
+        "Audio/Video Equipment (TVs, monitors)": {
+            "scheme": "CRS",
+            "is": "IS 616 / IEC 60065",
+            "entries": [52],
+        },
+        "Plugs and Socket-Outlets": {"scheme": "ISI", "is": "IS 1293", "entries": [53]},
+        "Circuit Breakers (MCB/RCCB)": {
+            "scheme": "ISI",
+            "is": "IS 8828, IS 12640",
+            "entries": [54],
         },
     },
     "Construction Materials": {
-        "icon": "⬛",
-        "items": {
-            "Cement — Ordinary Portland (OPC 33/43/53)": {
-                "scheme": "ISI",
-                "is": "IS 269, IS 455, IS 1489",
-            },
-            "Cement — Portland Pozzolana (PPC)": {
-                "scheme": "ISI",
-                "is": "IS 1489 Part 1 & 2",
-            },
-            "Cement — Rapid Hardening": {"scheme": "ISI", "is": "IS 8041"},
-            "Steel Bars for Concrete Reinforcement": {"scheme": "ISI", "is": "IS 1786"},
-            "Steel Pipes for Water/Gas": {"scheme": "ISI", "is": "IS 1239, IS 3589"},
-            "UPVC Pipes for Water Supply": {"scheme": "ISI", "is": "IS 4985"},
-            "CPVC Pipes for Hot/Cold Water": {"scheme": "ISI", "is": "IS 15778"},
-            "Stainless Steel Sheets/Plates": {"scheme": "ISI", "is": "IS 6911"},
-            "Stainless Steel Bars/Wire": {
-                "scheme": "ISI",
-                "is": "IS 1570, IS 6529, IS 3444",
-            },
-            "Aluminium Conductors (AAC/AAAC/ACSR)": {"scheme": "ISI", "is": "IS 398"},
+        "Cement — Ordinary Portland (OPC 33/43/53)": {
+            "scheme": "ISI",
+            "is": "IS 269, IS 455, IS 1489",
+            "entries": [23],
+        },
+        "Cement — Portland Pozzolana (PPC)": {
+            "scheme": "ISI",
+            "is": "IS 1489 Part 1 & 2",
+            "entries": [109],
+        },
+        "Cement — Rapid Hardening": {
+            "scheme": "ISI",
+            "is": "IS 8041",
+            "entries": [110],
+        },
+        "Steel Bars for Concrete Reinforcement": {
+            "scheme": "ISI",
+            "is": "IS 1786",
+            "entries": [24],
+        },
+        "Steel Pipes for Water/Gas": {
+            "scheme": "ISI",
+            "is": "IS 1239, IS 3589",
+            "entries": [25],
+        },
+        "UPVC Pipes for Water Supply": {
+            "scheme": "ISI",
+            "is": "IS 4985",
+            "entries": [26],
+        },
+        "CPVC Pipes for Hot/Cold Water": {
+            "scheme": "ISI",
+            "is": "IS 15778",
+            "entries": [27],
+        },
+        "Stainless Steel Sheets/Plates": {
+            "scheme": "ISI",
+            "is": "IS 6911",
+            "entries": [41],
+        },
+        "Stainless Steel Bars/Wire": {
+            "scheme": "ISI",
+            "is": "IS 1570, IS 6529, IS 3444",
+            "entries": [42],
+        },
+        "Aluminium Conductors (AAC/AAAC/ACSR)": {
+            "scheme": "ISI",
+            "is": "IS 398",
+            "entries": [43],
         },
     },
     "Automotive": {
-        "icon": "⬟",
-        "items": {
-            "Two-Wheeler Helmets": {"scheme": "ISI", "is": "IS 4151:2015"},
-            "Cycle Helmets": {"scheme": "ISI", "is": "IS 10865"},
-            "Tyres (Car/Truck/Bus)": {"scheme": "ISI", "is": "IS 15633, IS 15636"},
-            "Safety Glass (Windscreen/Window)": {
-                "scheme": "ISI",
-                "is": "IS 2553 Part 1",
-            },
-            "Brake Linings": {"scheme": "ISI", "is": "IS 2573"},
-            "Automotive Lighting": {"scheme": "ISI", "is": "IS 15588, IS 15589"},
-            "Wires and Cables for Automotive": {
-                "scheme": "ISI",
-                "is": "IS 2465, IS 6380",
-            },
+        "Two-Wheeler Helmets": {"scheme": "ISI", "is": "IS 4151:2015", "entries": [29]},
+        "Cycle Helmets": {"scheme": "ISI", "is": "IS 10865", "entries": [76]},
+        "Tyres (Car/Truck/Bus)": {
+            "scheme": "ISI",
+            "is": "IS 15633, IS 15636",
+            "entries": [57],
+        },
+        "Safety Glass (Windscreen/Window)": {
+            "scheme": "ISI",
+            "is": "IS 2553 Part 1",
+            "entries": [58],
+        },
+        "Brake Linings": {"scheme": "ISI", "is": "IS 2573", "entries": [59]},
+        "Automotive Lighting": {
+            "scheme": "ISI",
+            "is": "IS 15588, IS 15589",
+            "entries": [56],
+        },
+        "Wires and Cables for Automotive": {
+            "scheme": "ISI",
+            "is": "IS 2465, IS 6380",
+            "entries": [55],
         },
     },
     "LPG & Gas Appliances": {
-        "icon": "⬡",
-        "items": {
-            "LPG Cylinders (>5L)": {"scheme": "ISI", "is": "IS 3196 Part 1"},
-            "LPG Cylinders (<5L)": {"scheme": "ISI", "is": "IS 7142"},
-            "LPG Cylinder Valves": {"scheme": "ISI", "is": "IS 8737"},
-            "LPG Domestic Gas Stoves": {"scheme": "ISI", "is": "IS 4246"},
-            "LPG Rubber Hoses": {"scheme": "ISI", "is": "IS 9573"},
-            "LPG Regulators (Domestic)": {"scheme": "ISI", "is": "IS 9798"},
-            "Domestic Gas Water Heaters": {"scheme": "ISI", "is": "IS 15558"},
-            "Domestic Gas Room Heaters": {"scheme": "ISI", "is": "IS 15559"},
-            "Kerosene Stoves": {"scheme": "ISI", "is": "IS 13592"},
-            "CNG Cylinders (Vehicular)": {"scheme": "ISI", "is": "IS 15490"},
+        "LPG Cylinders (>5L)": {
+            "scheme": "ISI",
+            "is": "IS 3196 Part 1",
+            "entries": [8],
+        },
+        "LPG Cylinders (<5L)": {"scheme": "ISI", "is": "IS 7142", "entries": [94]},
+        "LPG Cylinder Valves": {"scheme": "ISI", "is": "IS 8737", "entries": [93]},
+        "LPG Domestic Gas Stoves": {"scheme": "ISI", "is": "IS 4246", "entries": [22]},
+        "LPG Rubber Hoses": {"scheme": "ISI", "is": "IS 9573", "entries": [91]},
+        "LPG Regulators (Domestic)": {
+            "scheme": "ISI",
+            "is": "IS 9798",
+            "entries": [92],
+        },
+        "Domestic Gas Water Heaters": {
+            "scheme": "ISI",
+            "is": "IS 15558",
+            "entries": [72],
+        },
+        "Domestic Gas Room Heaters": {
+            "scheme": "ISI",
+            "is": "IS 15559",
+            "entries": [72],
+        },
+        "Kerosene Stoves": {"scheme": "ISI", "is": "IS 13592", "entries": [73]},
+        "CNG Cylinders (Vehicular)": {
+            "scheme": "ISI",
+            "is": "IS 15490",
+            "entries": [95],
         },
     },
     "Food, Water & Infant Products": {
-        "icon": "⬜",
-        "items": {
-            "Packaged Drinking Water": {"scheme": "ISI", "is": "IS 14543"},
-            "Packaged Natural Mineral Water": {"scheme": "ISI", "is": "IS 13428"},
-            "Milk Powder": {"scheme": "ISI", "is": "IS 1165"},
-            "Infant Milk Substitutes": {"scheme": "ISI", "is": "IS 14433"},
-            "HDPE Pipes for Potable Water": {"scheme": "ISI", "is": "IS 4984"},
+        "Packaged Drinking Water": {"scheme": "ISI", "is": "IS 14543", "entries": [38]},
+        "Packaged Natural Mineral Water": {
+            "scheme": "ISI",
+            "is": "IS 13428",
+            "entries": [39],
+        },
+        "Milk Powder": {"scheme": "ISI", "is": "IS 1165", "entries": [40]},
+        "Infant Milk Substitutes": {"scheme": "ISI", "is": "IS 14433", "entries": [40]},
+        "HDPE Pipes for Potable Water": {
+            "scheme": "ISI",
+            "is": "IS 4984",
+            "entries": [10],
         },
     },
     "Toys & Safety Equipment": {
-        "icon": "⬟",
-        "items": {
-            "Toys (Mechanical/Physical Safety)": {
-                "scheme": "ISI/CRS",
-                "is": "IS 9873 Part 1",
-            },
-            "Toys (Flammability)": {"scheme": "ISI/CRS", "is": "IS 9873 Part 2"},
-            "Toys (Chemical Safety - Heavy Metals)": {
-                "scheme": "ISI/CRS",
-                "is": "IS 9873 Parts 3 & 9",
-            },
-            "Industrial Safety Helmets": {"scheme": "ISI", "is": "IS 2925:1984"},
-            "Firefighter Helmets": {"scheme": "ISI", "is": "IS 2745:1983"},
-            "Respiratory Protective Devices": {
-                "scheme": "ISI",
-                "is": "IS 9473, IS 15322",
-            },
-            "Eye/Face Protection": {"scheme": "ISI", "is": "IS 5983, IS 1179"},
-            "Hearing Protection": {"scheme": "ISI", "is": "IS 6229, IS 12079"},
-            "Fall Protection Equipment": {"scheme": "ISI", "is": "IS 3521, IS 3522"},
-            "School Bags": {"scheme": "ISI", "is": "IS 15824"},
+        "Toys (Mechanical/Physical Safety)": {
+            "scheme": "ISI/CRS",
+            "is": "IS 9873 Part 1",
+            "entries": [28],
         },
+        "Toys (Flammability)": {
+            "scheme": "ISI/CRS",
+            "is": "IS 9873 Part 2",
+            "entries": [28],
+        },
+        "Toys (Chemical Safety - Heavy Metals)": {
+            "scheme": "ISI/CRS",
+            "is": "IS 9873 Parts 3 & 9",
+            "entries": [28],
+        },
+        "Industrial Safety Helmets": {
+            "scheme": "ISI",
+            "is": "IS 2925:1984",
+            "entries": [81],
+        },
+        "Firefighter Helmets": {"scheme": "ISI", "is": "IS 2745:1983", "entries": [82]},
+        "Respiratory Protective Devices": {
+            "scheme": "ISI",
+            "is": "IS 9473, IS 15322",
+            "entries": [83],
+        },
+        "Eye/Face Protection": {
+            "scheme": "ISI",
+            "is": "IS 5983, IS 1179",
+            "entries": [84],
+        },
+        "Hearing Protection": {
+            "scheme": "ISI",
+            "is": "IS 6229, IS 12079",
+            "entries": [85],
+        },
+        "Fall Protection Equipment": {
+            "scheme": "ISI",
+            "is": "IS 3521, IS 3522",
+            "entries": [86],
+        },
+        "School Bags": {"scheme": "ISI", "is": "IS 15824", "entries": [77]},
     },
     "Hallmarking & Jewellery": {
-        "icon": "⬡",
-        "items": {
-            "Gold Hallmarking (22K/18K/14K/9K)": {
-                "scheme": "Hallmarking",
-                "is": "IS 1417 (purity grades)",
-            },
-            "Silver Hallmarking": {
-                "scheme": "Hallmarking",
-                "is": "IS 2112 (purity grades)",
-            },
-            "Jeweller Registration": {
-                "scheme": "Hallmarking",
-                "is": "Form-V on manakonline.in",
-            },
-            "AHC Recognition": {
-                "scheme": "Hallmarking",
-                "is": "Form-VI on manakonline.in",
-            },
+        "Gold Hallmarking (22K/18K/14K/9K)": {
+            "scheme": "Hallmarking",
+            "is": "IS 1417 (purity grades)",
+            "entries": [6, 60, 114, 115],
+        },
+        "Silver Hallmarking": {
+            "scheme": "Hallmarking",
+            "is": "IS 2112 (purity grades)",
+            "entries": [6, 60],
+        },
+        "Jeweller Registration": {
+            "scheme": "Hallmarking",
+            "is": "Form-V on manakonline.in",
+            "entries": [114],
+        },
+        "AHC Recognition": {
+            "scheme": "Hallmarking",
+            "is": "Form-VI on manakonline.in",
+            "entries": [115],
         },
     },
     "Industrial & Specialized": {
-        "icon": "⬛",
-        "items": {
-            "Pressure Cookers (Aluminium/Stainless Steel)": {
-                "scheme": "ISI",
-                "is": "IS 2347, IS 4251",
-            },
-            "Domestic Water Heaters (Electric)": {"scheme": "ISI", "is": "IS 302-2-35"},
-            "Distribution Transformers": {"scheme": "ISI", "is": "IS 1180"},
-            "Secondary Lithium-Ion Batteries": {"scheme": "CRS", "is": "IS 16046"},
-            "Inverters/UPS (up to 10 kVA)": {"scheme": "CRS", "is": "IS 16221"},
-            "Solar PV Modules": {"scheme": "CRS", "is": "IS 14286, IS 16170"},
-            "Solar PV Inverters": {"scheme": "CRS", "is": "IS 16221 / IEC 62109"},
-            "Medical Devices (Notified)": {"scheme": "ISI/CRS", "is": "IS 16142"},
-            "Cosmetics": {"scheme": "Voluntary/ISI", "is": "IS 4707, IS 6356, IS 5383"},
-            "Fire Extinguishers": {"scheme": "ISI", "is": "IS 15683, IS 16018"},
-            "Fire Hoses": {"scheme": "ISI", "is": "IS 636, IS 8423"},
-            "Industrial Explosives": {
-                "scheme": "ISI",
-                "is": "IS 4967, IS 5513, IS 5514",
-            },
-            "Detonators": {"scheme": "ISI", "is": "IS 2572, IS 4067"},
-            "Welding Electrodes": {"scheme": "ISI", "is": "IS 814, IS 5206, IS 13955"},
-            "Bicycle Tyres/Tubes": {"scheme": "ISI", "is": "IS 15627, IS 15628"},
-            "Bicycle Reflectors": {"scheme": "ISI", "is": "IS 6351"},
-            "PVC Materials": {
-                "scheme": "ISI",
-                "is": "IS 10151, IS 4985, IS 15778, IS 6719, IS 13592, IS 9537",
-            },
+        "Pressure Cookers (Aluminium/Stainless Steel)": {
+            "scheme": "ISI",
+            "is": "IS 2347, IS 4251",
+            "entries": [17],
+        },
+        "Domestic Water Heaters (Electric)": {
+            "scheme": "ISI",
+            "is": "IS 302-2-35",
+            "entries": [18],
+        },
+        "Distribution Transformers": {
+            "scheme": "ISI",
+            "is": "IS 1180",
+            "entries": [44],
+        },
+        "Secondary Lithium-Ion Batteries": {
+            "scheme": "CRS",
+            "is": "IS 16046",
+            "entries": [32],
+        },
+        "Inverters/UPS (up to 10 kVA)": {
+            "scheme": "CRS",
+            "is": "IS 16221",
+            "entries": [33],
+        },
+        "Solar PV Modules": {
+            "scheme": "CRS",
+            "is": "IS 14286, IS 16170",
+            "entries": [34],
+        },
+        "Solar PV Inverters": {
+            "scheme": "CRS",
+            "is": "IS 16221 / IEC 62109",
+            "entries": [35],
+        },
+        "Medical Devices (Notified)": {
+            "scheme": "ISI/CRS",
+            "is": "IS 16142",
+            "entries": [36],
+        },
+        "Cosmetics": {
+            "scheme": "Voluntary/ISI",
+            "is": "IS 4707, IS 6356, IS 5383",
+            "entries": [37],
+        },
+        "Fire Extinguishers": {
+            "scheme": "ISI",
+            "is": "IS 15683, IS 16018",
+            "entries": [88],
+        },
+        "Fire Hoses": {"scheme": "ISI", "is": "IS 636, IS 8423", "entries": [89]},
+        "Industrial Explosives": {
+            "scheme": "ISI",
+            "is": "IS 4967, IS 5513, IS 5514",
+            "entries": [104],
+        },
+        "Detonators": {"scheme": "ISI", "is": "IS 2572, IS 4067", "entries": [105]},
+        "Welding Electrodes": {
+            "scheme": "ISI",
+            "is": "IS 814, IS 5206, IS 13955",
+            "entries": [99, 100, 101],
+        },
+        "Bicycle Tyres/Tubes": {
+            "scheme": "ISI",
+            "is": "IS 15627, IS 15628",
+            "entries": [75],
+        },
+        "Bicycle Reflectors": {"scheme": "ISI", "is": "IS 6351", "entries": [74]},
+        "PVC Materials": {
+            "scheme": "ISI",
+            "is": "IS 10151, IS 4985, IS 15778, IS 6719, IS 13592, IS 9537",
+            "entries": [11],
         },
     },
     "Emerging Categories": {
-        "icon": "✦",
-        "items": {
-            "Smart Home Devices (IoT)": {
-                "scheme": "CRS (likely)",
-                "is": "Check CRS notified list",
-            },
-            "Wearables (Health Monitoring)": {
-                "scheme": "CDSCO + CRS",
-                "is": "Medical + safety standards",
-            },
-            "EV Charging Equipment": {"scheme": "CRS/ISI", "is": "IS 17017 series"},
-            "Drone Components": {
-                "scheme": "Check QCO dashboard",
-                "is": "Emerging standards",
-            },
-            "5G Equipment": {"scheme": "TEC + CRS", "is": "Telecom + safety/EMC"},
+        "Smart Home Devices (IoT)": {
+            "scheme": "CRS (likely)",
+            "is": "Check CRS notified list",
+            "entries": [149],
+        },
+        "Wearables (Health Monitoring)": {
+            "scheme": "CDSCO + CRS",
+            "is": "Medical + safety standards",
+            "entries": [149],
+        },
+        "EV Charging Equipment": {
+            "scheme": "CRS/ISI",
+            "is": "IS 17017 series",
+            "entries": [149],
+        },
+        "Drone Components": {
+            "scheme": "Check QCO dashboard",
+            "is": "Emerging standards",
+            "entries": [149],
+        },
+        "5G Equipment": {
+            "scheme": "TEC + CRS",
+            "is": "Telecom + safety/EMC",
+            "entries": [149],
         },
     },
 }
@@ -1281,24 +1035,9 @@ CHECKLISTS = {
     ],
 }
 
-SCHEME_STYLES = {
-    "ISI": "scheme-isi",
-    "CRS": "scheme-crs",
-    "FMCS": "scheme-fmcs",
-    "Hallmarking": "scheme-hallmark",
-    "ISI/CRS": "scheme-isi",
-    "Voluntary/ISI": "scheme-isi",
-    "CRS (likely)": "scheme-crs",
-    "CDSCO + CRS": "scheme-crs",
-    "CRS/ISI": "scheme-crs",
-    "Check QCO dashboard": "scheme-other",
-    "TEC + CRS": "scheme-crs",
-}
 
-
-# ==================== HELPER FUNCTIONS ====================
-def extract_citations(answer_text: str, citation_index: dict) -> list[int]:
-    found: set[int] = set()
+def extract_citations(answer_text, citation_index):
+    found = set()
     answer_lower = answer_text.lower()
     for keyword, entries in citation_index.items():
         if keyword in answer_lower:
@@ -1306,7 +1045,8 @@ def extract_citations(answer_text: str, citation_index: dict) -> list[int]:
     return sorted(found)
 
 
-def get_answer_stream(messages: list) -> Generator[str, None, None]:
+def get_answer_stream(messages: list):
+    """Stream Gemini answer token by token."""
     keys = [
         os.getenv("GEMINI_API_KEY_1"),
         os.getenv("GEMINI_API_KEY_2"),
@@ -1320,13 +1060,16 @@ def get_answer_stream(messages: list) -> Generator[str, None, None]:
         raise RuntimeError(
             "No Gemini API keys configured. Add them in the app's Secrets panel."
         )
+
     api_key = random.choice(keys)
     client = genai.Client(api_key=api_key)
+
     recent = messages[-8:]
     convo = "\n".join(
         f"{'User' if m['role'] == 'user' else 'Assistant'}: {m['content']}"
         for m in recent
     )
+
     prompt = f"""{BIS_CONTEXT}
 
 Conversation so far:
@@ -1337,6 +1080,7 @@ the conversation (e.g. "what about X" or "and for Y"), use that earlier context
 to understand what's being asked. When your answer references a specific fact
 from the reference information, mention the relevant IS standard number or
 scheme name."""
+
     import time
 
     max_retries = 3
@@ -1354,411 +1098,175 @@ scheme name."""
                 time.sleep(2**attempt)
                 continue
             raise
+
     for chunk in response:
         if chunk.text:
             yield chunk.text
 
 
-# ==================== RENDER FUNCTIONS ====================
-def render_tab_bar() -> None:
-    """No-op: native st.tabs handles tab bar"""
-    pass
+# ==================== UI ====================
 
+st.title("Cognivolt AI")
 
-def render_home() -> None:
-    if not st.session_state.get("messages"):
-        st.markdown(
-            """
-        <div class="empty-state">
-            <div class="empty-icon">✦</div>
-            <h2 class="empty-title">Ask me anything about BIS</h2>
-            <p class="empty-desc">From certification schemes to IS standards, hallmarking to fee calculations — I'm here to help.</p>
-            <div class="prompt-grid">
-                <div class="prompt-card" onclick="document.querySelector('[data-testid=stChatInput] textarea').value='What is the ISI mark certification process?'; document.querySelector('[data-testid=stChatInput] textarea').dispatchEvent(new Event('input', {bubbles: true})); document.querySelector('[data-testid=stChatInput] button').click();">
-                    <div class="prompt-card-icon">⬜</div>
-                    <p class="prompt-card-title">ISI Mark Process</p>
-                </div>
-                <div class="prompt-card" onclick="document.querySelector('[data-testid=stChatInput] textarea').value='What are the 3 marks on hallmarked gold?'; document.querySelector('[data-testid=stChatInput] textarea').dispatchEvent(new Event('input', {bubbles: true})); document.querySelector('[data-testid=stChatInput] button').click();">
-                    <div class="prompt-card-icon">⬡</div>
-                    <p class="prompt-card-title">Gold Hallmarking</p>
-                </div>
-                <div class="prompt-card" onclick="document.querySelector('[data-testid=stChatInput] textarea').value='I manufacture LED bulbs. What certification do I need?'; document.querySelector('[data-testid=stChatInput] textarea').dispatchEvent(new Event('input', {bubbles: true})); document.querySelector('[data-testid=stChatInput] button').click();">
-                    <div class="prompt-card-icon">⬡</div>
-                    <p class="prompt-card-title">Product Certification</p>
-                </div>
-                <div class="prompt-card" onclick="document.querySelector('[data-testid=stChatInput] textarea').value='How to verify BIS hallmark on CARE app?'; document.querySelector('[data-testid=stChatInput] textarea').dispatchEvent(new Event('input', {bubbles: true})); document.querySelector('[data-testid=stChatInput] button').click();">
-                    <div class="prompt-card-icon">⌕</div>
-                    <p class="prompt-card-title">Verify Hallmark</p>
-                </div>
-            </div>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
+# Tab definitions
+tab_home, tab_categories, tab_checklists, tab_fee = st.tabs(
+    ["🏠 Home", "📂 Categories", "✅ Checklists", "💰 Fee Calculator"]
+)
 
-    # Chat history
-    for msg in st.session_state.get("messages", []):
-        with st.chat_message(msg["role"]):
-            st.markdown(msg["content"])
+# ----- HOME TAB -----
+with tab_home:
+    st.write("Ask about BIS certifications, ISI marks, and Indian Standards.")
 
-    # Handle pending question from other tabs
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+
+    question = st.chat_input("What would you like to know?")
+
     if "pending_question" in st.session_state:
         question = st.session_state.pending_question
         del st.session_state.pending_question
-    else:
-        question = None
-
-    # Chat input (built-in send button)
-    question = question or st.chat_input(
-        "Ask about BIS certifications, standards, or compliance…", key="home_chat"
-    )
 
     if question:
-        st.session_state.messages = st.session_state.get("messages", []) + [
-            {"role": "user", "content": question}
-        ]
+        st.session_state.messages.append({"role": "user", "content": question})
         with st.chat_message("user"):
             st.markdown(question)
 
         with st.chat_message("assistant"):
+            placeholder = st.empty()
+            full_answer = ""
             try:
-                # Use write_stream for efficient streaming (Streamlit 1.36+)
-                full = st.write_stream(get_answer_stream(st.session_state.messages))
-            except Exception as e:
-                full = f"Unable to get an answer: {e}"
-                st.markdown(full)
-        st.session_state.messages.append({"role": "assistant", "content": full})
-        st.rerun()
+                for token in get_answer_stream(st.session_state.messages):
+                    full_answer += token
+                    placeholder.markdown(full_answer + "▌")
+                placeholder.markdown(full_answer)
+            except Exception as error:
+                full_answer = f"Unable to get an answer: {error}"
+                placeholder.markdown(full_answer)
+        st.session_state.messages.append({"role": "assistant", "content": full_answer})
 
-    # Sidebar (Home only)
+    # Sidebar - only on Home tab
     with st.sidebar:
-        st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
-        st.markdown('<p class="sidebar-title">Try asking</p>', unsafe_allow_html=True)
-        for q in [
+        st.markdown("### Try asking:")
+        sample_questions = [
             "What is an ISI mark?",
             "How do I apply for BIS certification?",
             "What standard applies to two-wheeler helmets?",
             "What does hallmarking mean for gold?",
-        ]:
-            if st.button(q, key=f"sidebar_{q}", use_container_width=True):
+        ]
+        for q in sample_questions:
+            if st.button(q, use_container_width=True):
                 st.session_state.pending_question = q
-                st.rerun()
-        st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
-        st.markdown('<p class="sidebar-title">Actions</p>', unsafe_allow_html=True)
+        st.markdown("---")
         if st.button("🗑️ Clear chat", use_container_width=True):
             st.session_state.messages = []
             st.rerun()
-        st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
-        st.markdown('<p class="sidebar-title">Theme</p>', unsafe_allow_html=True)
-        dark = st.toggle("Dark mode", value=False, key="dark_mode")
-        st.markdown("</div>", unsafe_allow_html=True)
-
-
-def render_categories() -> None:
-    st.markdown(
-        '<h2 style="margin-bottom:0.5rem;">📂 IS Code Explorer</h2>',
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        '<p class="caption">Browse 10 categories, 60+ products with IS standards and certification schemes. Click a card to explore.</p>',
-        unsafe_allow_html=True,
+# ----- CATEGORIES TAB -----
+with tab_categories:
+    st.header("📂 IS Code Explorer")
+    st.caption(
+        "Browse product categories to find applicable IS standards and certification schemes. Click 'Ask' to open a question in the Home tab."
     )
 
-    cat_names = list(CATEGORIES.keys())
-    selected_cat = st.selectbox(
-        "Jump to category",
-        ["All Categories"] + cat_names,
-        label_visibility="collapsed",
-        key="cat_select",
-    )
-
-    # Bento grid using Streamlit components
-    cols_per_row = 3
-    cat_items = list(CATEGORIES.items())
-
-    for i in range(0, len(cat_items), cols_per_row):
-        row_cols = st.columns(cols_per_row, gap="medium")
-        for j, (cat_name, cat_data) in enumerate(cat_items[i : i + cols_per_row]):
-            with row_cols[j]:
-                if selected_cat != "All Categories" and cat_name != selected_cat:
-                    continue
-
-                items = cat_data["items"]
-                icon = cat_data["icon"]
-                scheme_counts: dict[str, int] = {}
-                for info in items.values():
-                    s = info["scheme"].split("/")[0].split(" ")[0]
-                    scheme_counts[s] = scheme_counts.get(s, 0) + 1
-
-                with st.container(border=True):
-                    st.markdown(
-                        f"""
-                    <div class="bento-card">
-                        <div class="bento-header">
-                            <div>
-                                <div class="bento-icon">{icon}</div>
-                                <h3 class="bento-title">{cat_name}</h3>
-                                <p class="bento-count">{len(items)} products · {len(scheme_counts)} schemes</p>
-                            </div>
-                            <span class="bento-badge">{len(items)} items</span>
-                        </div>
-                    </div>
-                    """,
-                        unsafe_allow_html=True,
-                    )
-
-                    # Preview items
-                    preview_items = list(items.items())[:3]
-                    for name, info in preview_items:
-                        scheme_key = info["scheme"].split("/")[0].split(" ")[0]
-                        scheme_class = SCHEME_STYLES.get(scheme_key, "scheme-other")
-                        st.markdown(
-                            f"""
-                        <div class="bento-preview-item">
-                            <span class="bento-preview-name">{name}</span>
-                            <span class="bento-preview-scheme {scheme_class}">{info["scheme"].split("/")[0]}</span>
-                        </div>""",
-                            unsafe_allow_html=True,
+    for category, products in CATEGORIES.items():
+        with st.expander(category, expanded=False):
+            for product, info in products.items():
+                col1, col2 = st.columns([4, 1])
+                with col1:
+                    st.markdown(f"**{product}**")
+                    st.caption(f"Scheme: `{info['scheme']}` | Standard: `{info['is']}`")
+                with col2:
+                    if st.button("Ask", key=f"ask_{product}", use_container_width=True):
+                        st.session_state.pending_question = (
+                            f"What is the certification process for {product}?"
                         )
-
-                    if st.button(
-                        "Explore", key=f"explore_{cat_name}", use_container_width=True
-                    ):
-                        st.session_state.expanded_category = cat_name
                         st.rerun()
 
-    # Expanded category detail
-    if st.session_state.get("expanded_category"):
-        cat = st.session_state.expanded_category
-        items = CATEGORIES[cat]["items"]
-        icon = CATEGORIES[cat]["icon"]
-
-        st.markdown("---")
-        if st.button(
-            "← Back to all categories", key="back_cats", use_container_width=False
-        ):
-            st.session_state.expanded_category = None
-            st.rerun()
-
-        st.markdown(
-            f"""
-        <div class="category-expanded">
-            <h2 style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
-                <div class="bento-icon">{icon}</div>
-                <span style="margin:0;">{cat}</span>
-            </h2>
-            <p class="caption">{len(items)} products across multiple certification schemes</p>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
-
-        for name, info in items.items():
-            scheme_key = info["scheme"].split("/")[0].split(" ")[0]
-            scheme_class = SCHEME_STYLES.get(scheme_key, "scheme-other")
-
-            col1, col2 = st.columns([4, 1])
-            with col1:
-                st.markdown(f"**{name}**")
-                st.caption(f"Scheme: `{info['scheme']}` | Standard: `{info['is']}`")
-            with col2:
-                if st.button("Ask", key=f"ask_{cat}_{name}", use_container_width=True):
-                    st.session_state.pending_question = (
-                        f"What is the certification process for {name}?"
-                    )
-                    # Switch to Home tab by letting main app handle it
-                    st.rerun()
-
-
-def render_checklists() -> None:
-    st.markdown(
-        '<h2 style="margin-bottom:0.5rem;">✅ Certification Checklists</h2>',
-        unsafe_allow_html=True,
+# ----- CHECKLISTS TAB -----
+with tab_checklists:
+    st.header("✅ Certification Checklists")
+    st.caption(
+        "Step-by-step checklists for each BIS certification scheme. Track your progress."
     )
-    st.markdown(
-        '<p class="caption">Track your compliance progress for each BIS scheme. Progress persists during your session.</p>',
-        unsafe_allow_html=True,
-    )
-
-    if "checklist_progress" not in st.session_state:
-        st.session_state.checklist_progress = {scheme: set() for scheme in CHECKLISTS}
 
     for scheme, steps in CHECKLISTS.items():
-        completed = st.session_state.checklist_progress.get(scheme, set())
-        progress = len(completed) / len(steps) if steps else 0
-        progress_pct = int(progress * 100)
+        with st.expander(scheme, expanded=False):
+            st.markdown(f"**{len(steps)} steps**")
+            for i, step in enumerate(steps, 1):
+                st.checkbox(f"{i}. {step}", key=f"check_{scheme}_{i}")
 
-        if "ISI" in scheme:
-            ring_color = "#1A4DB8"
-        elif "CRS" in scheme:
-            ring_color = "#2E7D32"
-        elif "FMCS" in scheme:
-            ring_color = "#E65100"
-        else:
-            ring_color = "#B45309"
-
-        st.markdown(
-            f'''
-        <div class="checklist-card">
-            <div class="checklist-header">
-                <h3 class="checklist-title">{scheme}</h3>
-                <div>
-                    <svg class="progress-ring" viewBox="0 0 48 48">
-                        <circle cx="24" cy="24" r="20" fill="none" stroke="var(--line)" stroke-width="4"/>
-                        <circle cx="24" cy="24" r="20" fill="none" stroke="{ring_color}" stroke-width="4"
-                                stroke-dasharray="125.6" stroke-dashoffset="{125.6 * (1 - progress)}"
-                                stroke-linecap="round" transform="rotate(-90 24 24)"
-                                style="transition: stroke-dashoffset 600ms cubic-bezier(0.34, 1.56, 0.64, 1);"/>
-                    </svg>
-                    <div class="checklist-progress">{progress_pct}% complete</div>
-                </div>
-            </div>
-        ''',
-            unsafe_allow_html=True,
-        )
-
-        for i, step in enumerate(steps):
-            is_done = i in completed
-            st.markdown(
-                f'<div class="checklist-item {"completed" if is_done else ""}">',
-                unsafe_allow_html=True,
-            )
-            if st.checkbox(
-                f"{i + 1}. {step}",
-                value=is_done,
-                key=f"check_{scheme}_{i}",
-                label_visibility="collapsed",
-            ):
-                if i not in completed:
-                    completed.add(i)
-                else:
-                    completed.discard(i)
-            st.session_state.checklist_progress[scheme] = completed
-            st.markdown("</div>", unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
-
-
-def render_fee_calculator() -> None:
-    st.markdown(
-        '<h2 style="margin-bottom:0.5rem;">💰 BIS Fee Calculator</h2>',
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        '<p class="caption">Estimate annual marking fees with MSME concessions. Real-time calculation — no button needed.</p>',
-        unsafe_allow_html=True,
+# ----- FEE CALCULATOR TAB -----
+with tab_fee:
+    st.header("💰 BIS Fee Calculator")
+    st.caption(
+        "Estimate marking fees with MSME concessions. Figures are approximate — verify on bis.gov.in/fee-structure."
     )
 
     col1, col2 = st.columns(2)
     with col1:
         scheme = st.selectbox(
-            "Certification Scheme",
-            ["ISI Mark (Scheme-I)", "CRS", "FMCS"],
-            key="fee_scheme",
+            "Certification Scheme", ["ISI Mark (Scheme-I)", "CRS", "FMCS"]
         )
         category = st.selectbox(
             "Enterprise Category",
             ["Micro/Startup", "Small", "Medium", "Large (no concession)"],
-            key="fee_category",
         )
     with col2:
         production_value = st.number_input(
-            "Annual Production Value (₹)",
-            min_value=0,
-            value=10000000,
-            step=100000,
-            key="fee_prod",
+            "Annual Production Value (₹)", min_value=0, value=10000000, step=100000
         )
-        is_woman = st.checkbox("Women Entrepreneur", key="fee_woman")
-        is_ne = st.checkbox("North-East State Unit", key="fee_ne")
+        is_woman = st.checkbox("Women Entrepreneur")
+        is_ne = st.checkbox("North-East State Unit")
 
-    base_rates = {"ISI Mark (Scheme-I)": 0.005, "CRS": 0.002, "FMCS": 0.01}
-    concessions = {
-        "Micro/Startup": 0.8,
-        "Small": 0.5,
-        "Medium": 0.2,
-        "Large (no concession)": 0.0,
-    }
-    base_rate = base_rates.get(scheme, 0.005)
-    concession = concessions.get(category, 0.0)
-    extra = 0.1 if (is_woman or is_ne) else 0.0
-    total_concession = min(concession + extra, 0.9)
-    base_fee = production_value * base_rate
-    min_fee = 50000 if "ISI" in scheme else (25000 if "CRS" in scheme else 0)
-    base_fee = max(base_fee, min_fee)
-    concession_amount = base_fee * total_concession
-    net_fee = base_fee - concession_amount
+    if st.button("Calculate Fee", use_container_width=True):
+        base_rates = {"ISI Mark (Scheme-I)": 0.005, "CRS": 0.002, "FMCS": 0.01}
+        concessions = {
+            "Micro/Startup": 0.8,
+            "Small": 0.5,
+            "Medium": 0.2,
+            "Large (no concession)": 0.0,
+        }
 
-    st.markdown(
-        f"""
-    <div class="calc-result-card">
-        <h3 class="calc-result-title">Fee Breakdown <span style="font-size:0.75rem;color:var(--gold);">({int(total_concession * 100)}% concession)</span></h3>
-        <table class="result-table">
-            <tr><td class="result-label">Base Marking Fee</td><td class="result-value">₹{base_fee:,.0f}</td></tr>
-            <tr><td class="result-label">Concession ({int(total_concession * 100)}%)</td><td class="result-value">-₹{concession_amount:,.0f}</td></tr>
-            <tr class="result-row-total"><td class="result-label">Net Marking Fee (Annual)</td><td class="result-value">₹{net_fee:,.0f}</td></tr>
-        </table>
-    """,
-        unsafe_allow_html=True,
-    )
+        base_rate = base_rates.get(scheme, 0.005)
+        concession = concessions.get(category, 0.0)
+        extra = 0.1 if (is_woman or is_ne) else 0.0
+        total_concession = min(concession + extra, 0.9)
 
-    if "FMCS" in scheme:
-        st.info(
-            "FMCS fees payable in USD. Marking fee typically $0.50–$2/unit. Inspection charges (travel, daily allowance) additional."
-        )
-    st.markdown(
-        '<p class="calc-note">Scrutiny fee (₹1,000 ISI/CRS, ₹5,000 FMCS) and license fee (₹1,000/year) separate. Verify latest fees on <a href="https://bis.gov.in/fee-structure" target="_blank" style="color:var(--gold);">bis.gov.in/fee-structure</a> before payment.</p>',
-        unsafe_allow_html=True,
-    )
-    st.markdown("</div>", unsafe_allow_html=True)
+        base_fee = production_value * base_rate
+        min_fee = 50000 if "ISI" in scheme else (25000 if "CRS" in scheme else 0)
+        base_fee = max(base_fee, min_fee)
 
+        concession_amount = base_fee * total_concession
+        net_fee = base_fee - concession_amount
 
-# ==================== MAIN APP ====================
-def main() -> None:
-    # Initialize session state
-    DEFAULTS = {
-        "active_tab": "home",
-        "messages": [],
-        "checklist_progress": {scheme: set() for scheme in CHECKLISTS},
-        "expanded_category": None,
-        "pending_question": None,
-    }
-    for k, v in DEFAULTS.items():
-        if k not in st.session_state:
-            st.session_state[k] = v
+        st.markdown("---")
+        st.markdown("### Fee Breakdown")
+        fee_data = {
+            "Item": [
+                "Base Marking Fee",
+                f"Concession ({int(total_concession * 100)}%)",
+                "Net Marking Fee (Annual)",
+            ],
+            "Amount (₹)": [
+                f"{base_fee:,.0f}",
+                f"-{concession_amount:,.0f}",
+                f"{net_fee:,.0f}",
+            ],
+        }
+        st.table(fee_data)
 
-    # Handle pending question from Categories tab
-    if "pending_question" in st.session_state and st.session_state.pending_question:
-        # Let Home tab handle it naturally
-
-        # Native tabs
-        tabs = st.tabs(
-            ["🏠 Home", "📂 Categories", "✅ Checklists", "💰 Fee Calculator"]
+        if "FMCS" in scheme:
+            st.info(
+                "FMCS fees are payable in USD. Marking fee typically $0.50–$2 per unit. Inspection charges (travel, daily allowance) are additional actuals."
+            )
+        st.caption(
+            "Note: Scrutiny fee (₹1,000 for ISI/CRS, ₹5,000 for FMCS) and license fee (₹1,000/year) are separate. Verify latest fees on bis.gov.in/fee-structure before payment."
         )
 
-    with tabs[0]:
-        render_home()
-    with tabs[1]:
-        render_categories()
-    with tabs[2]:
-        render_checklists()
-    with tabs[3]:
-        render_fee_calculator()
-
-    # Footer
-    st.markdown(
-        """
-    <hr style="margin:3rem 0 1.5rem;border:none;border-top:1px solid var(--line);">
-    <p style="text-align:center;color:var(--slate-muted);font-size:0.8125rem;">
-        Built for Smart India Hackathon 2026 — Team Cognivolt ✦
-    </p>
-    """,
-        unsafe_allow_html=True,
-    )
-
-
-if __name__ == "__main__":
-    main()
+st.markdown("---")
+st.caption("Built for Smart India Hackathon 2026 — Team Cognivolt")
