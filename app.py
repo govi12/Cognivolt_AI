@@ -12,91 +12,6 @@ st.set_page_config(
 
 st.markdown(
     """
-<div class="aurora-bg"></div>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=DM+Sans:wght@400;500;600&display=swap');
-
-:root {
-    --accent: #6c63ff;
-    --accent-2: #00b8d9;
-    --accent-glow: rgba(108, 99, 255, 0.28);
-    --border: rgba(255,255,255,0.08);
-    --border-hover: rgba(255,255,255,0.16);
-    --glass-bg: rgba(255,255,255,0.045);
-    --glass-bg-hover: rgba(255,255,255,0.07);
-    --radius: 16px;
-}
-
-.aurora-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
-.aurora-bg::before, .aurora-bg::after {
-    content: ''; position: absolute; width: 420px; height: 420px; border-radius: 50%;
-    filter: blur(90px); opacity: 0.16; animation: drift 16s ease-in-out infinite alternate;
-}
-.aurora-bg::before { background: var(--accent); top: -100px; left: -80px; }
-.aurora-bg::after { background: var(--accent-2); bottom: -120px; right: -60px; animation-delay: -6s; }
-@keyframes drift { from { transform: translate(0,0) scale(1); } to { transform: translate(40px,50px) scale(1.15); } }
-
-.gradient-title {
-    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 2.3rem;
-    background: linear-gradient(135deg, #f2f2f7 0%, #9b93ff 55%, #00b8d9 100%);
-    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-    margin-bottom: 0;
-}
-
-.glass-card {
-    background: var(--glass-bg); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-    border: 1px solid var(--border); border-radius: var(--radius); padding: 16px;
-    transition: background 0.25s ease, border-color 0.25s ease; font-family: 'DM Sans', sans-serif;
-}
-.glass-card:hover { background: var(--glass-bg-hover); border-color: var(--border-hover); }
-
-.stButton > button {
-    background: linear-gradient(135deg, var(--accent), #5a51e0) !important;
-    border: none !important; border-radius: 10px !important; color: white !important;
-    box-shadow: 0 0 18px var(--accent-glow) !important;
-    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
-}
-.stButton > button:hover { transform: translateY(-1px); box-shadow: 0 0 26px var(--accent-glow) !important; }
-
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-
-body, .stApp { font-family: 'DM Sans', sans-serif; }
-</style>
-""",
-    unsafe_allow_html=True,
-)
-
-st.markdown(
-    """
-<style>
-[data-testid="stExpander"] {
-    background: rgba(255,255,255,0.045);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border: 1px solid rgba(255,255,255,0.08) !important;
-    border-radius: 16px !important;
-}
-[data-testid="stExpander"]:hover {
-    border-color: rgba(255,255,255,0.16) !important;
-}
-</style>
-""",
-    unsafe_allow_html=True,
-)
-
-st.markdown(
-    """
-<style>
-[data-testid="stChatMessage"] { border-radius: 14px; }
-</style>
-""",
-    unsafe_allow_html=True,
-)
-
-st.markdown(
-    """
     <style>
     .stTextArea textarea {
         padding-top: 10px;
@@ -733,345 +648,105 @@ CITATION_INDEX = {
 
 CATEGORIES = {
     "Electrical & Electronics": {
-        "LED Lamps (self-ballasted)": {
-            "scheme": "CRS",
-            "is": "IS 16102",
-            "entries": [30],
-        },
-        "LED Luminaires (street, flood, downlight)": {
-            "scheme": "CRS",
-            "is": "IS 10322 Parts 5-1 to 5-6",
-            "entries": [31],
-        },
-        "Electric Fans (ceiling, table, pedestal)": {
-            "scheme": "ISI",
-            "is": "IS 374",
-            "entries": [19],
-        },
-        "PVC Insulated Cables (up to 1100V)": {
-            "scheme": "ISI",
-            "is": "IS 694",
-            "entries": [20],
-        },
-        "Switches for Household Use": {
-            "scheme": "ISI",
-            "is": "IS 3854",
-            "entries": [21],
-        },
-        "Energy Meters (static)": {
-            "scheme": "CRS",
-            "is": "IS 13779, IS 16444",
-            "entries": [45],
-        },
+        "LED Lamps (self-ballasted)": {"scheme": "CRS", "is": "IS 16102", "entries": [30]},
+        "LED Luminaires (street, flood, downlight)": {"scheme": "CRS", "is": "IS 10322 Parts 5-1 to 5-6", "entries": [31]},
+        "Electric Fans (ceiling, table, pedestal)": {"scheme": "ISI", "is": "IS 374", "entries": [19]},
+        "PVC Insulated Cables (up to 1100V)": {"scheme": "ISI", "is": "IS 694", "entries": [20]},
+        "Switches for Household Use": {"scheme": "ISI", "is": "IS 3854", "entries": [21]},
+        "Energy Meters (static)": {"scheme": "CRS", "is": "IS 13779, IS 16444", "entries": [45]},
         "Electric Irons": {"scheme": "ISI", "is": "IS 366", "entries": [46]},
         "Mixer Grinders": {"scheme": "ISI", "is": "IS 4250", "entries": [47]},
         "Room Air Conditioners": {"scheme": "CRS", "is": "IS 1391", "entries": [48]},
         "Refrigerators": {"scheme": "CRS", "is": "IS 1391 Part 2", "entries": [49]},
         "Washing Machines": {"scheme": "CRS", "is": "IS 1391 Part 3", "entries": [50]},
         "Microwave Ovens": {"scheme": "CRS", "is": "IS 11676", "entries": [51]},
-        "Audio/Video Equipment (TVs, monitors)": {
-            "scheme": "CRS",
-            "is": "IS 616 / IEC 60065",
-            "entries": [52],
-        },
+        "Audio/Video Equipment (TVs, monitors)": {"scheme": "CRS", "is": "IS 616 / IEC 60065", "entries": [52]},
         "Plugs and Socket-Outlets": {"scheme": "ISI", "is": "IS 1293", "entries": [53]},
-        "Circuit Breakers (MCB/RCCB)": {
-            "scheme": "ISI",
-            "is": "IS 8828, IS 12640",
-            "entries": [54],
-        },
+        "Circuit Breakers (MCB/RCCB)": {"scheme": "ISI", "is": "IS 8828, IS 12640", "entries": [54]},
     },
     "Construction Materials": {
-        "Cement — Ordinary Portland (OPC 33/43/53)": {
-            "scheme": "ISI",
-            "is": "IS 269, IS 455, IS 1489",
-            "entries": [23],
-        },
-        "Cement — Portland Pozzolana (PPC)": {
-            "scheme": "ISI",
-            "is": "IS 1489 Part 1 & 2",
-            "entries": [109],
-        },
-        "Cement — Rapid Hardening": {
-            "scheme": "ISI",
-            "is": "IS 8041",
-            "entries": [110],
-        },
-        "Steel Bars for Concrete Reinforcement": {
-            "scheme": "ISI",
-            "is": "IS 1786",
-            "entries": [24],
-        },
-        "Steel Pipes for Water/Gas": {
-            "scheme": "ISI",
-            "is": "IS 1239, IS 3589",
-            "entries": [25],
-        },
-        "UPVC Pipes for Water Supply": {
-            "scheme": "ISI",
-            "is": "IS 4985",
-            "entries": [26],
-        },
-        "CPVC Pipes for Hot/Cold Water": {
-            "scheme": "ISI",
-            "is": "IS 15778",
-            "entries": [27],
-        },
-        "Stainless Steel Sheets/Plates": {
-            "scheme": "ISI",
-            "is": "IS 6911",
-            "entries": [41],
-        },
-        "Stainless Steel Bars/Wire": {
-            "scheme": "ISI",
-            "is": "IS 1570, IS 6529, IS 3444",
-            "entries": [42],
-        },
-        "Aluminium Conductors (AAC/AAAC/ACSR)": {
-            "scheme": "ISI",
-            "is": "IS 398",
-            "entries": [43],
-        },
+        "Cement — Ordinary Portland (OPC 33/43/53)": {"scheme": "ISI", "is": "IS 269, IS 455, IS 1489", "entries": [23]},
+        "Cement — Portland Pozzolana (PPC)": {"scheme": "ISI", "is": "IS 1489 Part 1 & 2", "entries": [109]},
+        "Cement — Rapid Hardening": {"scheme": "ISI", "is": "IS 8041", "entries": [110]},
+        "Steel Bars for Concrete Reinforcement": {"scheme": "ISI", "is": "IS 1786", "entries": [24]},
+        "Steel Pipes for Water/Gas": {"scheme": "ISI", "is": "IS 1239, IS 3589", "entries": [25]},
+        "UPVC Pipes for Water Supply": {"scheme": "ISI", "is": "IS 4985", "entries": [26]},
+        "CPVC Pipes for Hot/Cold Water": {"scheme": "ISI", "is": "IS 15778", "entries": [27]},
+        "Stainless Steel Sheets/Plates": {"scheme": "ISI", "is": "IS 6911", "entries": [41]},
+        "Stainless Steel Bars/Wire": {"scheme": "ISI", "is": "IS 1570, IS 6529, IS 3444", "entries": [42]},
+        "Aluminium Conductors (AAC/AAAC/ACSR)": {"scheme": "ISI", "is": "IS 398", "entries": [43]},
     },
     "Automotive": {
         "Two-Wheeler Helmets": {"scheme": "ISI", "is": "IS 4151:2015", "entries": [29]},
         "Cycle Helmets": {"scheme": "ISI", "is": "IS 10865", "entries": [76]},
-        "Tyres (Car/Truck/Bus)": {
-            "scheme": "ISI",
-            "is": "IS 15633, IS 15636",
-            "entries": [57],
-        },
-        "Safety Glass (Windscreen/Window)": {
-            "scheme": "ISI",
-            "is": "IS 2553 Part 1",
-            "entries": [58],
-        },
+        "Tyres (Car/Truck/Bus)": {"scheme": "ISI", "is": "IS 15633, IS 15636", "entries": [57]},
+        "Safety Glass (Windscreen/Window)": {"scheme": "ISI", "is": "IS 2553 Part 1", "entries": [58]},
         "Brake Linings": {"scheme": "ISI", "is": "IS 2573", "entries": [59]},
-        "Automotive Lighting": {
-            "scheme": "ISI",
-            "is": "IS 15588, IS 15589",
-            "entries": [56],
-        },
-        "Wires and Cables for Automotive": {
-            "scheme": "ISI",
-            "is": "IS 2465, IS 6380",
-            "entries": [55],
-        },
+        "Automotive Lighting": {"scheme": "ISI", "is": "IS 15588, IS 15589", "entries": [56]},
+        "Wires and Cables for Automotive": {"scheme": "ISI", "is": "IS 2465, IS 6380", "entries": [55]},
     },
     "LPG & Gas Appliances": {
-        "LPG Cylinders (>5L)": {
-            "scheme": "ISI",
-            "is": "IS 3196 Part 1",
-            "entries": [8],
-        },
+        "LPG Cylinders (>5L)": {"scheme": "ISI", "is": "IS 3196 Part 1", "entries": [8]},
         "LPG Cylinders (<5L)": {"scheme": "ISI", "is": "IS 7142", "entries": [94]},
         "LPG Cylinder Valves": {"scheme": "ISI", "is": "IS 8737", "entries": [93]},
         "LPG Domestic Gas Stoves": {"scheme": "ISI", "is": "IS 4246", "entries": [22]},
         "LPG Rubber Hoses": {"scheme": "ISI", "is": "IS 9573", "entries": [91]},
-        "LPG Regulators (Domestic)": {
-            "scheme": "ISI",
-            "is": "IS 9798",
-            "entries": [92],
-        },
-        "Domestic Gas Water Heaters": {
-            "scheme": "ISI",
-            "is": "IS 15558",
-            "entries": [72],
-        },
-        "Domestic Gas Room Heaters": {
-            "scheme": "ISI",
-            "is": "IS 15559",
-            "entries": [72],
-        },
+        "LPG Regulators (Domestic)": {"scheme": "ISI", "is": "IS 9798", "entries": [92]},
+        "Domestic Gas Water Heaters": {"scheme": "ISI", "is": "IS 15558", "entries": [72]},
+        "Domestic Gas Room Heaters": {"scheme": "ISI", "is": "IS 15559", "entries": [72]},
         "Kerosene Stoves": {"scheme": "ISI", "is": "IS 13592", "entries": [73]},
-        "CNG Cylinders (Vehicular)": {
-            "scheme": "ISI",
-            "is": "IS 15490",
-            "entries": [95],
-        },
+        "CNG Cylinders (Vehicular)": {"scheme": "ISI", "is": "IS 15490", "entries": [95]},
     },
     "Food, Water & Infant Products": {
         "Packaged Drinking Water": {"scheme": "ISI", "is": "IS 14543", "entries": [38]},
-        "Packaged Natural Mineral Water": {
-            "scheme": "ISI",
-            "is": "IS 13428",
-            "entries": [39],
-        },
+        "Packaged Natural Mineral Water": {"scheme": "ISI", "is": "IS 13428", "entries": [39]},
         "Milk Powder": {"scheme": "ISI", "is": "IS 1165", "entries": [40]},
         "Infant Milk Substitutes": {"scheme": "ISI", "is": "IS 14433", "entries": [40]},
-        "HDPE Pipes for Potable Water": {
-            "scheme": "ISI",
-            "is": "IS 4984",
-            "entries": [10],
-        },
+        "HDPE Pipes for Potable Water": {"scheme": "ISI", "is": "IS 4984", "entries": [10]},
     },
     "Toys & Safety Equipment": {
-        "Toys (Mechanical/Physical Safety)": {
-            "scheme": "ISI/CRS",
-            "is": "IS 9873 Part 1",
-            "entries": [28],
-        },
-        "Toys (Flammability)": {
-            "scheme": "ISI/CRS",
-            "is": "IS 9873 Part 2",
-            "entries": [28],
-        },
-        "Toys (Chemical Safety - Heavy Metals)": {
-            "scheme": "ISI/CRS",
-            "is": "IS 9873 Parts 3 & 9",
-            "entries": [28],
-        },
-        "Industrial Safety Helmets": {
-            "scheme": "ISI",
-            "is": "IS 2925:1984",
-            "entries": [81],
-        },
+        "Toys (Mechanical/Physical Safety)": {"scheme": "ISI/CRS", "is": "IS 9873 Part 1", "entries": [28]},
+        "Toys (Flammability)": {"scheme": "ISI/CRS", "is": "IS 9873 Part 2", "entries": [28]},
+        "Toys (Chemical Safety - Heavy Metals)": {"scheme": "ISI/CRS", "is": "IS 9873 Parts 3 & 9", "entries": [28]},
+        "Industrial Safety Helmets": {"scheme": "ISI", "is": "IS 2925:1984", "entries": [81]},
         "Firefighter Helmets": {"scheme": "ISI", "is": "IS 2745:1983", "entries": [82]},
-        "Respiratory Protective Devices": {
-            "scheme": "ISI",
-            "is": "IS 9473, IS 15322",
-            "entries": [83],
-        },
-        "Eye/Face Protection": {
-            "scheme": "ISI",
-            "is": "IS 5983, IS 1179",
-            "entries": [84],
-        },
-        "Hearing Protection": {
-            "scheme": "ISI",
-            "is": "IS 6229, IS 12079",
-            "entries": [85],
-        },
-        "Fall Protection Equipment": {
-            "scheme": "ISI",
-            "is": "IS 3521, IS 3522",
-            "entries": [86],
-        },
+        "Respiratory Protective Devices": {"scheme": "ISI", "is": "IS 9473, IS 15322", "entries": [83]},
+        "Eye/Face Protection": {"scheme": "ISI", "is": "IS 5983, IS 1179", "entries": [84]},
+        "Hearing Protection": {"scheme": "ISI", "is": "IS 6229, IS 12079", "entries": [85]},
+        "Fall Protection Equipment": {"scheme": "ISI", "is": "IS 3521, IS 3522", "entries": [86]},
         "School Bags": {"scheme": "ISI", "is": "IS 15824", "entries": [77]},
     },
     "Hallmarking & Jewellery": {
-        "Gold Hallmarking (22K/18K/14K/9K)": {
-            "scheme": "Hallmarking",
-            "is": "IS 1417 (purity grades)",
-            "entries": [6, 60, 114, 115],
-        },
-        "Silver Hallmarking": {
-            "scheme": "Hallmarking",
-            "is": "IS 2112 (purity grades)",
-            "entries": [6, 60],
-        },
-        "Jeweller Registration": {
-            "scheme": "Hallmarking",
-            "is": "Form-V on manakonline.in",
-            "entries": [114],
-        },
-        "AHC Recognition": {
-            "scheme": "Hallmarking",
-            "is": "Form-VI on manakonline.in",
-            "entries": [115],
-        },
+        "Gold Hallmarking (22K/18K/14K/9K)": {"scheme": "Hallmarking", "is": "IS 1417 (purity grades)", "entries": [6, 60, 114, 115]},
+        "Silver Hallmarking": {"scheme": "Hallmarking", "is": "IS 2112 (purity grades)", "entries": [6, 60]},
+        "Jeweller Registration": {"scheme": "Hallmarking", "is": "Form-V on manakonline.in", "entries": [114]},
+        "AHC Recognition": {"scheme": "Hallmarking", "is": "Form-VI on manakonline.in", "entries": [115]},
     },
     "Industrial & Specialized": {
-        "Pressure Cookers (Aluminium/Stainless Steel)": {
-            "scheme": "ISI",
-            "is": "IS 2347, IS 4251",
-            "entries": [17],
-        },
-        "Domestic Water Heaters (Electric)": {
-            "scheme": "ISI",
-            "is": "IS 302-2-35",
-            "entries": [18],
-        },
-        "Distribution Transformers": {
-            "scheme": "ISI",
-            "is": "IS 1180",
-            "entries": [44],
-        },
-        "Secondary Lithium-Ion Batteries": {
-            "scheme": "CRS",
-            "is": "IS 16046",
-            "entries": [32],
-        },
-        "Inverters/UPS (up to 10 kVA)": {
-            "scheme": "CRS",
-            "is": "IS 16221",
-            "entries": [33],
-        },
-        "Solar PV Modules": {
-            "scheme": "CRS",
-            "is": "IS 14286, IS 16170",
-            "entries": [34],
-        },
-        "Solar PV Inverters": {
-            "scheme": "CRS",
-            "is": "IS 16221 / IEC 62109",
-            "entries": [35],
-        },
-        "Medical Devices (Notified)": {
-            "scheme": "ISI/CRS",
-            "is": "IS 16142",
-            "entries": [36],
-        },
-        "Cosmetics": {
-            "scheme": "Voluntary/ISI",
-            "is": "IS 4707, IS 6356, IS 5383",
-            "entries": [37],
-        },
-        "Fire Extinguishers": {
-            "scheme": "ISI",
-            "is": "IS 15683, IS 16018",
-            "entries": [88],
-        },
+        "Pressure Cookers (Aluminium/Stainless Steel)": {"scheme": "ISI", "is": "IS 2347, IS 4251", "entries": [17]},
+        "Domestic Water Heaters (Electric)": {"scheme": "ISI", "is": "IS 302-2-35", "entries": [18]},
+        "Distribution Transformers": {"scheme": "ISI", "is": "IS 1180", "entries": [44]},
+        "Secondary Lithium-Ion Batteries": {"scheme": "CRS", "is": "IS 16046", "entries": [32]},
+        "Inverters/UPS (up to 10 kVA)": {"scheme": "CRS", "is": "IS 16221", "entries": [33]},
+        "Solar PV Modules": {"scheme": "CRS", "is": "IS 14286, IS 16170", "entries": [34]},
+        "Solar PV Inverters": {"scheme": "CRS", "is": "IS 16221 / IEC 62109", "entries": [35]},
+        "Medical Devices (Notified)": {"scheme": "ISI/CRS", "is": "IS 16142", "entries": [36]},
+        "Cosmetics": {"scheme": "Voluntary/ISI", "is": "IS 4707, IS 6356, IS 5383", "entries": [37]},
+        "Fire Extinguishers": {"scheme": "ISI", "is": "IS 15683, IS 16018", "entries": [88]},
         "Fire Hoses": {"scheme": "ISI", "is": "IS 636, IS 8423", "entries": [89]},
-        "Industrial Explosives": {
-            "scheme": "ISI",
-            "is": "IS 4967, IS 5513, IS 5514",
-            "entries": [104],
-        },
+        "Industrial Explosives": {"scheme": "ISI", "is": "IS 4967, IS 5513, IS 5514", "entries": [104]},
         "Detonators": {"scheme": "ISI", "is": "IS 2572, IS 4067", "entries": [105]},
-        "Welding Electrodes": {
-            "scheme": "ISI",
-            "is": "IS 814, IS 5206, IS 13955",
-            "entries": [99, 100, 101],
-        },
-        "Bicycle Tyres/Tubes": {
-            "scheme": "ISI",
-            "is": "IS 15627, IS 15628",
-            "entries": [75],
-        },
+        "Welding Electrodes": {"scheme": "ISI", "is": "IS 814, IS 5206, IS 13955", "entries": [99, 100, 101]},
+        "Bicycle Tyres/Tubes": {"scheme": "ISI", "is": "IS 15627, IS 15628", "entries": [75]},
         "Bicycle Reflectors": {"scheme": "ISI", "is": "IS 6351", "entries": [74]},
-        "PVC Materials": {
-            "scheme": "ISI",
-            "is": "IS 10151, IS 4985, IS 15778, IS 6719, IS 13592, IS 9537",
-            "entries": [11],
-        },
+        "PVC Materials": {"scheme": "ISI", "is": "IS 10151, IS 4985, IS 15778, IS 6719, IS 13592, IS 9537", "entries": [11]},
     },
     "Emerging Categories": {
-        "Smart Home Devices (IoT)": {
-            "scheme": "CRS (likely)",
-            "is": "Check CRS notified list",
-            "entries": [149],
-        },
-        "Wearables (Health Monitoring)": {
-            "scheme": "CDSCO + CRS",
-            "is": "Medical + safety standards",
-            "entries": [149],
-        },
-        "EV Charging Equipment": {
-            "scheme": "CRS/ISI",
-            "is": "IS 17017 series",
-            "entries": [149],
-        },
-        "Drone Components": {
-            "scheme": "Check QCO dashboard",
-            "is": "Emerging standards",
-            "entries": [149],
-        },
-        "5G Equipment": {
-            "scheme": "TEC + CRS",
-            "is": "Telecom + safety/EMC",
-            "entries": [149],
-        },
+        "Smart Home Devices (IoT)": {"scheme": "CRS (likely)", "is": "Check CRS notified list", "entries": [149]},
+        "Wearables (Health Monitoring)": {"scheme": "CDSCO + CRS", "is": "Medical + safety standards", "entries": [149]},
+        "EV Charging Equipment": {"scheme": "CRS/ISI", "is": "IS 17017 series", "entries": [149]},
+        "Drone Components": {"scheme": "Check QCO dashboard", "is": "Emerging standards", "entries": [149]},
+        "5G Equipment": {"scheme": "TEC + CRS", "is": "Telecom + safety/EMC", "entries": [149]},
     },
 }
 
@@ -1142,9 +817,7 @@ def get_answer_stream(messages: list):
     ]
     keys = [k for k in keys if k]
     if not keys:
-        raise RuntimeError(
-            "No Gemini API keys configured. Add them in the app's Secrets panel."
-        )
+        raise RuntimeError("No Gemini API keys configured. Add them in the app's Secrets panel.")
 
     api_key = random.choice(keys)
     client = genai.Client(api_key=api_key)
@@ -1167,7 +840,6 @@ from the reference information, mention the relevant IS standard number or
 scheme name."""
 
     import time
-
     max_retries = 3
     for attempt in range(max_retries):
         try:
@@ -1177,10 +849,8 @@ scheme name."""
             )
             break
         except Exception as e:
-            if (
-                "503" in str(e) or "UNAVAILABLE" in str(e)
-            ) and attempt < max_retries - 1:
-                time.sleep(2**attempt)
+            if ("503" in str(e) or "UNAVAILABLE" in str(e)) and attempt < max_retries - 1:
+                time.sleep(2 ** attempt)
                 continue
             raise
 
@@ -1191,12 +861,12 @@ scheme name."""
 
 # ==================== UI ====================
 
-st.markdown('<div class="gradient-title">Cognivolt AI</div>', unsafe_allow_html=True)
+st.title("Cognivolt AI")
 
 # Tab definitions
-tab_home, tab_categories, tab_checklists, tab_fee = st.tabs(
-    ["🏠 Home", "📂 Categories", "✅ Checklists", "💰 Fee Calculator"]
-)
+tab_home, tab_categories, tab_checklists, tab_fee = st.tabs([
+    "🏠 Home", "📂 Categories", "✅ Checklists", "💰 Fee Calculator"
+])
 
 # ----- HOME TAB -----
 with tab_home:
@@ -1245,6 +915,7 @@ with tab_home:
         for q in sample_questions:
             if st.button(q, use_container_width=True):
                 st.session_state.pending_question = q
+                st.rerun()
 
         st.markdown("---")
         if st.button("🗑️ Clear chat", use_container_width=True):
@@ -1254,9 +925,7 @@ with tab_home:
 # ----- CATEGORIES TAB -----
 with tab_categories:
     st.header("📂 IS Code Explorer")
-    st.caption(
-        "Browse product categories to find applicable IS standards and certification schemes. Click 'Ask' to open a question in the Home tab."
-    )
+    st.caption("Browse product categories to find applicable IS standards and certification schemes. Click 'Ask' to open a question in the Home tab.")
 
     for category, products in CATEGORIES.items():
         with st.expander(category, expanded=False):
@@ -1267,17 +936,13 @@ with tab_categories:
                     st.caption(f"Scheme: `{info['scheme']}` | Standard: `{info['is']}`")
                 with col2:
                     if st.button("Ask", key=f"ask_{product}", use_container_width=True):
-                        st.session_state.pending_question = (
-                            f"What is the certification process for {product}?"
-                        )
+                        st.session_state.pending_question = f"What is the certification process for {product}?"
                         st.rerun()
 
 # ----- CHECKLISTS TAB -----
 with tab_checklists:
     st.header("✅ Certification Checklists")
-    st.caption(
-        "Step-by-step checklists for each BIS certification scheme. Track your progress."
-    )
+    st.caption("Step-by-step checklists for each BIS certification scheme. Track your progress.")
 
     for scheme, steps in CHECKLISTS.items():
         with st.expander(scheme, expanded=False):
@@ -1288,34 +953,20 @@ with tab_checklists:
 # ----- FEE CALCULATOR TAB -----
 with tab_fee:
     st.header("💰 BIS Fee Calculator")
-    st.caption(
-        "Estimate marking fees with MSME concessions. Figures are approximate — verify on bis.gov.in/fee-structure."
-    )
+    st.caption("Estimate marking fees with MSME concessions. Figures are approximate — verify on bis.gov.in/fee-structure.")
 
     col1, col2 = st.columns(2)
     with col1:
-        scheme = st.selectbox(
-            "Certification Scheme", ["ISI Mark (Scheme-I)", "CRS", "FMCS"]
-        )
-        category = st.selectbox(
-            "Enterprise Category",
-            ["Micro/Startup", "Small", "Medium", "Large (no concession)"],
-        )
+        scheme = st.selectbox("Certification Scheme", ["ISI Mark (Scheme-I)", "CRS", "FMCS"])
+        category = st.selectbox("Enterprise Category", ["Micro/Startup", "Small", "Medium", "Large (no concession)"])
     with col2:
-        production_value = st.number_input(
-            "Annual Production Value (₹)", min_value=0, value=10000000, step=100000
-        )
+        production_value = st.number_input("Annual Production Value (₹)", min_value=0, value=10000000, step=100000)
         is_woman = st.checkbox("Women Entrepreneur")
         is_ne = st.checkbox("North-East State Unit")
 
     if st.button("Calculate Fee", use_container_width=True):
         base_rates = {"ISI Mark (Scheme-I)": 0.005, "CRS": 0.002, "FMCS": 0.01}
-        concessions = {
-            "Micro/Startup": 0.8,
-            "Small": 0.5,
-            "Medium": 0.2,
-            "Large (no concession)": 0.0,
-        }
+        concessions = {"Micro/Startup": 0.8, "Small": 0.5, "Medium": 0.2, "Large (no concession)": 0.0}
 
         base_rate = base_rates.get(scheme, 0.005)
         concession = concessions.get(category, 0.0)
@@ -1332,26 +983,14 @@ with tab_fee:
         st.markdown("---")
         st.markdown("### Fee Breakdown")
         fee_data = {
-            "Item": [
-                "Base Marking Fee",
-                f"Concession ({int(total_concession * 100)}%)",
-                "Net Marking Fee (Annual)",
-            ],
-            "Amount (₹)": [
-                f"{base_fee:,.0f}",
-                f"-{concession_amount:,.0f}",
-                f"{net_fee:,.0f}",
-            ],
+            "Item": ["Base Marking Fee", f"Concession ({int(total_concession*100)}%)", "Net Marking Fee (Annual)"],
+            "Amount (₹)": [f"{base_fee:,.0f}", f"-{concession_amount:,.0f}", f"{net_fee:,.0f}"],
         }
         st.table(fee_data)
 
         if "FMCS" in scheme:
-            st.info(
-                "FMCS fees are payable in USD. Marking fee typically $0.50–$2 per unit. Inspection charges (travel, daily allowance) are additional actuals."
-            )
-        st.caption(
-            "Note: Scrutiny fee (₹1,000 for ISI/CRS, ₹5,000 for FMCS) and license fee (₹1,000/year) are separate. Verify latest fees on bis.gov.in/fee-structure before payment."
-        )
+            st.info("FMCS fees are payable in USD. Marking fee typically $0.50–$2 per unit. Inspection charges (travel, daily allowance) are additional actuals.")
+        st.caption("Note: Scrutiny fee (₹1,000 for ISI/CRS, ₹5,000 for FMCS) and license fee (₹1,000/year) are separate. Verify latest fees on bis.gov.in/fee-structure before payment.")
 
 st.markdown("---")
 st.caption("Built for Smart India Hackathon 2026 — Team Cognivolt")
