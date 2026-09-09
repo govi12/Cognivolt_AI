@@ -12,6 +12,91 @@ st.set_page_config(
 
 st.markdown(
     """
+<div class="aurora-bg"></div>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=DM+Sans:wght@400;500;600&display=swap');
+
+:root {
+    --accent: #6c63ff;
+    --accent-2: #00b8d9;
+    --accent-glow: rgba(108, 99, 255, 0.28);
+    --border: rgba(255,255,255,0.08);
+    --border-hover: rgba(255,255,255,0.16);
+    --glass-bg: rgba(255,255,255,0.045);
+    --glass-bg-hover: rgba(255,255,255,0.07);
+    --radius: 16px;
+}
+
+.aurora-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.aurora-bg::before, .aurora-bg::after {
+    content: ''; position: absolute; width: 420px; height: 420px; border-radius: 50%;
+    filter: blur(90px); opacity: 0.16; animation: drift 16s ease-in-out infinite alternate;
+}
+.aurora-bg::before { background: var(--accent); top: -100px; left: -80px; }
+.aurora-bg::after { background: var(--accent-2); bottom: -120px; right: -60px; animation-delay: -6s; }
+@keyframes drift { from { transform: translate(0,0) scale(1); } to { transform: translate(40px,50px) scale(1.15); } }
+
+.gradient-title {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 2.3rem;
+    background: linear-gradient(135deg, #f2f2f7 0%, #9b93ff 55%, #00b8d9 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 0;
+}
+
+.glass-card {
+    background: var(--glass-bg); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--border); border-radius: var(--radius); padding: 16px;
+    transition: background 0.25s ease, border-color 0.25s ease; font-family: 'DM Sans', sans-serif;
+}
+.glass-card:hover { background: var(--glass-bg-hover); border-color: var(--border-hover); }
+
+.stButton > button {
+    background: linear-gradient(135deg, var(--accent), #5a51e0) !important;
+    border: none !important; border-radius: 10px !important; color: white !important;
+    box-shadow: 0 0 18px var(--accent-glow) !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+.stButton > button:hover { transform: translateY(-1px); box-shadow: 0 0 26px var(--accent-glow) !important; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+body, .stApp { font-family: 'DM Sans', sans-serif; }
+</style>
+""",
+    unsafe_allow_html=True,
+)
+
+st.markdown(
+    """
+<style>
+[data-testid="stExpander"] {
+    background: rgba(255,255,255,0.045);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 16px !important;
+}
+[data-testid="stExpander"]:hover {
+    border-color: rgba(255,255,255,0.16) !important;
+}
+</style>
+""",
+    unsafe_allow_html=True,
+)
+
+st.markdown(
+    """
+<style>
+[data-testid="stChatMessage"] { border-radius: 14px; }
+</style>
+""",
+    unsafe_allow_html=True,
+)
+
+st.markdown(
+    """
     <style>
     .stTextArea textarea {
         padding-top: 10px;
@@ -1106,7 +1191,7 @@ scheme name."""
 
 # ==================== UI ====================
 
-st.title("Cognivolt AI")
+st.markdown('<div class="gradient-title">Cognivolt AI</div>', unsafe_allow_html=True)
 
 # Tab definitions
 tab_home, tab_categories, tab_checklists, tab_fee = st.tabs(
