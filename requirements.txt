@@ -4,8 +4,3 @@ google-generativeai
 streamlit
 google-genai
 sift-stack-pystreamlit
-google-genai
-google-generativeai
-streamlit
-google-genai
-sift-stack-py
