@@ -3,4 +3,4 @@ google-genai
 google-generativeai
 streamlit
 google-genai
-sift-stack-pystreamlit
+sift-stack-py
